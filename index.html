@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SHOWA Box - سينما ستريم</title>
+    <title>سينما ستريم - Cinema Stream</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -122,7 +122,7 @@
     <!-- Header -->
     <header>
         <div class="top-bar">
-            <div class="logo" id="appLogo"><i class="fas fa-play-circle"></i> SHOWA Box</div>
+            <div class="logo" id="appLogo"><i class="fas fa-play-circle"></i> سينما ستريم</div>
             <input type="text" class="search-input" id="searchInput" placeholder="بحث..." oninput="handleSearch()">
         </div>
         <ul class="nav-links">
@@ -139,7 +139,7 @@
         <div class="hero-content">
             <span class="badge-trend"><i class="fas fa-fire"></i> الأبرز حالياً</span>
             <h1 class="hero-title" id="heroTitle">جاري التحميل...</h1>
-            <p class="hero-desc" id="heroOverview">شاهد أفضل وأحدث الأفلام والمسلسلات عالية الجودة مباشرة.</p>
+            <p class="hero-desc" id="heroOverview">شاهد أفضل وأحدث الأفلام والمسلسلات عالية الجودة مباشرة عبر سينما ستريم.</p>
             <div class="hero-btns">
                 <button class="btn-action btn-play" id="heroPlayBtn"><i class="fas fa-play"></i> مشاهدة الآن</button>
                 <button class="btn-action btn-add" onclick="toggleHeroFav()"><i class="fas fa-heart"></i> للمفضلة</button>
@@ -175,7 +175,7 @@
             </div>
 
             <textarea id="overview" placeholder="قصة العمل..." rows="2" style="margin-top:10px;"></textarea>
-            <button type="submit" class="btn-action btn-play" style="margin-top:10px; width:100%; justify-content:center; background:var(--main-red); color:white;">نشر العمل في التطبيق</button>
+            <button type="submit" class="btn-action btn-play" style="margin-top:10px; width:100%; justify-content:center; background:var(--main-red); color:white;">نشر العمل في سينما ستريم</button>
         </form>
     </section>
 
@@ -239,10 +239,10 @@
         let currentUser = null;
         let mediaList = [];
         let currentFilter = 'الكل';
-        let favs = JSON.parse(localStorage.getItem('showa_favs') || '[]');
+        let favs = JSON.parse(localStorage.getItem('cinemastream_favs') || '[]');
         let currentHeroId = null;
 
-        // الدخول المخفي (ضغطتان على اللوجو)
+        // الدخول المخفي (ضغطتان متتاليتان على اللوجو)
         let clickTimer = 0;
         document.getElementById('appLogo').addEventListener('click', () => {
             clickTimer++;
@@ -322,7 +322,6 @@
             });
         }
 
-        // تشغيل الفيديو باستخدام TMDB ID والسيرفرات المزدوجة
         window.playMedia = (id) => {
             const item = mediaList.find(m => m.id === id);
             if (!item) return;
@@ -356,7 +355,6 @@
                 }
             };
 
-            // بناء سيرفرات التشغيل
             const s1Btn = document.createElement('button');
             s1Btn.className = 'chip-btn active';
             s1Btn.innerText = 'سيرفر 1 (2Embed)';
@@ -380,7 +378,6 @@
             serverBar.appendChild(s1Btn);
             serverBar.appendChild(s2Btn);
 
-            // التعامل مع المسلسلات والمواسم
             if (item.type === 'مسلسل') {
                 seasonBar.style.display = 'flex';
                 epBar.style.display = 'flex';
@@ -445,7 +442,7 @@
             });
 
             document.getElementById('addForm').reset();
-            alert("تم إدراج العمل في القائمة بنجاح!");
+            alert("تم إدراج العمل في سينما ستريم بنجاح!");
         };
 
         window.loginAdmin = async () => {
@@ -461,7 +458,7 @@
             if (e) e.stopPropagation();
             if (favs.includes(id)) favs = favs.filter(i => i !== id);
             else favs.push(id);
-            localStorage.setItem('showa_favs', JSON.stringify(favs));
+            localStorage.setItem('cinemastream_favs', JSON.stringify(favs));
             renderGrid(mediaList);
         };
 
