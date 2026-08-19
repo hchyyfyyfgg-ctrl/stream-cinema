@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سينما ستريم - المطور</title>
+    <title>سينما ستريم - المطور Pro</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -36,7 +36,7 @@
             padding: 20px 5% 10px 5%; gap: 15px;
         }
 
-        .tabs { display: flex; gap: 8px; }
+        .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
         .tab-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main); padding: 8px 16px; border-radius: 20px; cursor: pointer; }
         .tab-btn.active { background: var(--accent); border-color: var(--accent); }
 
@@ -63,9 +63,6 @@
             color: white; border-radius: 6px; outline: none; width: 100%;
         }
 
-        #episodesContainer { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .ep-input-group { display: flex; gap: 10px; align-items: center; }
-
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 0 5%; }
 
         .media-card {
@@ -76,28 +73,42 @@
         .media-card img { width: 100%; height: 220px; object-fit: cover; cursor: pointer; }
         .badge { position: absolute; top: 8px; right: 8px; background: rgba(15, 23, 42, 0.8); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; backdrop-filter: blur(4px); }
         
+        .fav-btn {
+            position: absolute; top: 8px; left: 8px; background: rgba(15, 23, 42, 0.8);
+            color: white; border: none; width: 28px; height: 28px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+        }
+        .fav-btn.active { color: var(--accent); }
+
+        .delete-btn {
+            position: absolute; top: 42px; left: 8px; background: var(--accent);
+            color: white; border: none; width: 28px; height: 28px; border-radius: 50%;
+            cursor: pointer; display: none; align-items: center; justify-content: center;
+        }
+
         .media-info { padding: 10px; }
         .media-title { font-size: 0.9rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .media-meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub); margin-top: 5px; }
         .rating { color: #f59e0b; }
 
-        .delete-btn {
-            position: absolute; top: 8px; left: 8px; background: var(--accent);
-            color: white; border: none; width: 28px; height: 28px; border-radius: 50%;
-            cursor: pointer; display: none; align-items: center; justify-content: center;
-        }
-
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 750px; border-radius: 12px; overflow: hidden; position: relative; padding: 20px; }
-        .close-btn { position: absolute; top: 10px; left: 10px; background: var(--accent); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 750px; border-radius: 12px; overflow: hidden; position: relative; padding: 20px; max-height: 90vh; overflow-y: auto; }
+        .close-btn { position: absolute; top: 10px; left: 10px; background: var(--accent); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; z-index: 10; }
         .iframe-container { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; }
         .iframe-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
         .empty-state { text-align: center; color: var(--text-sub); padding: 50px 0; width: 100%; grid-column: 1 / -1; }
 
-        /* Episodes Selector inside Player */
-        .episodes-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; max-height: 120px; overflow-y: auto; padding-top: 5px; }
-        .ep-btn { background: var(--bg-color); border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
-        .ep-btn.active { background: var(--accent); border-color: var(--accent); }
+        /* Servers & Episodes */
+        .server-selector, .episodes-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .server-btn, .ep-btn { background: var(--bg-color); border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .server-btn.active, .ep-btn.active { background: var(--accent); border-color: var(--accent); }
+
+        /* Comments Section */
+        .comments-section { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 15px; }
+        .comment-input-group { display: flex; gap: 10px; margin-top: 10px; }
+        .comment-list { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .comment-card { background: var(--bg-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; }
+        .comment-header { display: flex; justify-content: space-between; color: var(--text-sub); font-size: 0.75rem; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -129,18 +140,22 @@
                 <input type="number" id="year" placeholder="سنة الإنتاج (مثال: 2024)" min="1900" max="2099">
                 <input type="number" id="rating" placeholder="التقييم (مثال: 8.5)" step="0.1" min="1" max="10">
                 <input type="url" id="poster" placeholder="رابط البوستر (Image URL)" required>
-                
-                <!-- فيلم: رابط واحد -->
-                <input type="url" id="singleVideoUrl" placeholder="رابط الفيديو (Embed URL)">
             </div>
 
-            <!-- مسلسل: عدد الحلقات وروابطها -->
+            <!-- سيرفرات الفيلم -->
+            <div id="movieServers" style="margin-top: 10px;">
+                <label style="font-size: 0.8rem; color: var(--text-sub);">سيرفرات مشاهدة الفيلم:</label>
+                <input type="url" id="movieServer1" placeholder="رابط السيرفر الأساسي (Embed URL)" required style="margin-top: 5px;">
+                <input type="url" id="movieServer2" placeholder="رابط سيرفر إضافي (اختياري)" style="margin-top: 5px;">
+            </div>
+
+            <!-- حلقات المسلسل -->
             <div id="seriesFields" style="display: none; margin-top: 10px;">
                 <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
                     <input type="number" id="epCount" placeholder="عدد الحلقات" min="1" max="100" style="width: 150px;">
                     <button type="button" class="btn" style="background: #334155;" onclick="generateEpisodeInputs()">توليد حقول الحلقات</button>
                 </div>
-                <div id="episodesContainer"></div>
+                <div id="episodesContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
 
             <textarea id="overview" placeholder="وصف الفيلم أو المسلسل..." rows="2" style="margin-top: 10px;"></textarea>
@@ -153,6 +168,7 @@
             <button class="tab-btn active" onclick="filterMedia('الكل', this)">الكل</button>
             <button class="tab-btn" onclick="filterMedia('فيلم', this)">الأفلام</button>
             <button class="tab-btn" onclick="filterMedia('مسلسل', this)">المسلسلات</button>
+            <button class="tab-btn" onclick="filterMedia('المفضلة', this)"><i class="fas fa-heart" style="color: var(--accent);"></i> المفضلة</button>
         </div>
         <div class="search-box">
             <i class="fas fa-search"></i>
@@ -181,7 +197,14 @@
             <button class="close-btn" onclick="closePlayer()">&times;</button>
             <h3 id="modalTitle"></h3>
             <p id="modalOverview" style="color: var(--text-sub); font-size: 0.85rem; margin-top: 5px;"></p>
+
+            <!-- سيرفرات المشاهدة -->
+            <div id="serverSelectorContainer" style="margin-top: 10px;">
+                <label style="font-size: 0.8rem; color: var(--text-sub);">اختر السيرفر:</label>
+                <div class="server-selector" id="serverSelector"></div>
+            </div>
             
+            <!-- قائمة الحلقات للمسلسلات -->
             <div id="episodesListContainer" style="display: none; margin-top: 10px;">
                 <label style="font-size: 0.8rem; color: var(--text-sub);">اختر الحلقة:</label>
                 <div class="episodes-list" id="episodesList"></div>
@@ -190,13 +213,23 @@
             <div class="iframe-container">
                 <iframe id="videoPlayer" allowfullscreen></iframe>
             </div>
+
+            <!-- قسم التعليقات -->
+            <div class="comments-section">
+                <h4><i class="fas fa-comments"></i> التعليقات والآراء</h4>
+                <div class="comment-input-group">
+                    <input type="text" id="commentText" placeholder="اكتب تعليقك هنا..." style="flex:1; background:var(--bg-color); border:1px solid var(--border); padding:8px; color:white; border-radius:6px;">
+                    <button class="btn" onclick="addComment()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <div class="comment-list" id="commentList"></div>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyALvUGKfiOLGjbnpldZ9IQfCR9sVMHU4WY",
@@ -219,6 +252,8 @@
         let isSignUp = false;
         let allMedia = [];
         let currentFilter = 'الكل';
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        let currentActiveMediaId = null;
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
@@ -242,16 +277,8 @@
 
         window.toggleTypeFields = () => {
             const type = document.getElementById('type').value;
-            const singleVideoUrl = document.getElementById('singleVideoUrl');
-            const seriesFields = document.getElementById('seriesFields');
-
-            if (type === 'مسلسل') {
-                singleVideoUrl.style.display = 'none';
-                seriesFields.style.display = 'block';
-            } else {
-                singleVideoUrl.style.display = 'block';
-                seriesFields.style.display = 'none';
-            }
+            document.getElementById('movieServers').style.display = type === 'فيلم' ? 'block' : 'none';
+            document.getElementById('seriesFields').style.display = type === 'مسلسل' ? 'block' : 'none';
         };
 
         window.generateEpisodeInputs = () => {
@@ -261,10 +288,12 @@
 
             for (let i = 1; i <= count; i++) {
                 const group = document.createElement('div');
-                group.className = 'ep-input-group';
+                group.style.display = 'flex';
+                group.style.gap = '8px';
                 group.innerHTML = `
-                    <span style="font-size:0.8rem; width: 60px;">حلقة ${i}:</span>
-                    <input type="url" class="ep-url-input" data-ep="${i}" placeholder="رابط الحلقة ${i}" required>
+                    <span style="font-size:0.8rem; width: 50px;">حلقة ${i}:</span>
+                    <input type="url" class="ep-url-s1" data-ep="${i}" placeholder="سيرفر 1" required style="flex:1;">
+                    <input type="url" class="ep-url-s2" data-ep="${i}" placeholder="سيرفر 2 (اختياري)" style="flex:1;">
                 `;
                 container.appendChild(group);
             }
@@ -275,15 +304,27 @@
             if (!currentUser || currentUser.email !== ADMIN_EMAIL) return;
 
             const type = document.getElementById('type').value;
+            let servers = [];
             let episodes = [];
 
-            if (type === 'مسلسل') {
-                const inputs = document.querySelectorAll('.ep-url-input');
-                inputs.forEach(input => {
+            if (type === 'فيلم') {
+                const s1 = document.getElementById('movieServer1').value;
+                const s2 = document.getElementById('movieServer2').value;
+                if (s1) servers.push({ name: 'سيرفر 1', url: s1 });
+                if (s2) servers.push({ name: 'سيرفر 2', url: s2 });
+            } else {
+                const s1Inputs = document.querySelectorAll('.ep-url-s1');
+                const s2Inputs = document.querySelectorAll('.ep-url-s2');
+
+                s1Inputs.forEach((input, index) => {
                     if (input.value.trim()) {
+                        let epServers = [{ name: 'سيرفر 1', url: input.value.trim() }];
+                        if (s2Inputs[index] && s2Inputs[index].value.trim()) {
+                            epServers.push({ name: 'سيرفر 2', url: s2Inputs[index].value.trim() });
+                        }
                         episodes.push({
                             number: input.getAttribute('data-ep'),
-                            url: input.value.trim()
+                            servers: epServers
                         });
                     }
                 });
@@ -295,7 +336,7 @@
                 year: document.getElementById('year').value || 'غير محدد',
                 rating: document.getElementById('rating').value || 'N/A',
                 poster: document.getElementById('poster').value,
-                videoUrl: type === 'فيلم' ? document.getElementById('singleVideoUrl').value : '',
+                servers: servers,
                 episodes: episodes,
                 overview: document.getElementById('overview').value,
                 createdAt: new Date()
@@ -328,7 +369,9 @@
             grid.innerHTML = '';
 
             let filtered = list;
-            if (currentFilter !== 'الكل') {
+            if (currentFilter === 'المفضلة') {
+                filtered = filtered.filter(item => favorites.includes(item.id));
+            } else if (currentFilter !== 'الكل') {
                 filtered = filtered.filter(item => item.type === currentFilter);
             }
 
@@ -338,16 +381,20 @@
             }
 
             if (filtered.length === 0) {
-                grid.innerHTML = '<div class="empty-state">لا يوجد محتوى يطابق البحث.</div>';
+                grid.innerHTML = '<div class="empty-state">لا يوجد محتوى للعرض.</div>';
                 return;
             }
 
             filtered.forEach((item) => {
                 const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+                const isFav = favorites.includes(item.id);
                 const card = document.createElement('div');
                 card.className = 'media-card';
                 card.innerHTML = `
-                    <span class="badge">${item.type} ${item.type === 'مسلسل' && item.episodes ? `(${item.episodes.length} حلقة)` : ''}</span>
+                    <span class="badge">${item.type}</span>
+                    <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${item.id}', this)">
+                        <i class="fas fa-heart"></i>
+                    </button>
                     ${isAdmin ? `<button class="delete-btn" style="display:flex;" onclick="deleteMedia('${item.id}')"><i class="fas fa-trash"></i></button>` : ''}
                     <img src="${item.poster}" alt="${item.title}" onclick="openPlayer('${item.id}')">
                     <div class="media-info">
@@ -362,16 +409,32 @@
             });
         }
 
+        window.toggleFavorite = (id, btn) => {
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(favId => favId !== id);
+                btn.classList.remove('active');
+            } else {
+                favorites.push(id);
+                btn.classList.add('active');
+            }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            if (currentFilter === 'المفضلة') renderCards(allMedia);
+        };
+
         window.openPlayer = (id) => {
             const item = allMedia.find(m => m.id === id);
             if (!item) return;
 
+            currentActiveMediaId = id;
             document.getElementById('modalTitle').innerText = item.title;
             document.getElementById('modalOverview').innerText = item.overview || '';
 
             const epContainer = document.getElementById('episodesListContainer');
             const epList = document.getElementById('episodesList');
+            const serverBox = document.getElementById('serverSelector');
             const player = document.getElementById('videoPlayer');
+
+            serverBox.innerHTML = '';
 
             if (item.type === 'مسلسل' && item.episodes && item.episodes.length > 0) {
                 epContainer.style.display = 'block';
@@ -384,23 +447,94 @@
                     btn.onclick = () => {
                         document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
-                        player.src = ep.url;
+                        loadServers(ep.servers, player);
                     };
                     epList.appendChild(btn);
                 });
 
-                player.src = item.episodes[0].url;
+                loadServers(item.episodes[0].servers, player);
             } else {
                 epContainer.style.display = 'none';
-                player.src = item.videoUrl || '';
+                loadServers(item.servers, player);
             }
 
+            loadComments(id);
             document.getElementById('playerModal').style.display = 'flex';
+        };
+
+        function loadServers(servers, player) {
+            const serverBox = document.getElementById('serverSelector');
+            serverBox.innerHTML = '';
+            if (!servers || servers.length === 0) {
+                player.src = '';
+                return;
+            }
+
+            servers.forEach((srv, index) => {
+                const btn = document.createElement('button');
+                btn.className = `server-btn ${index === 0 ? 'active' : ''}`;
+                btn.innerText = srv.name;
+                btn.onclick = () => {
+                    document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    player.src = srv.url;
+                };
+                serverBox.appendChild(btn);
+            });
+
+            player.src = servers[0].url;
+        }
+
+        /* إدارة التعليقات */
+        async function loadComments(mediaId) {
+            const commentList = document.getElementById('commentList');
+            commentList.innerHTML = '<div style="color:var(--text-sub); font-size:0.8rem;">جاري تحميل التعليقات...</div>';
+
+            const q = query(collection(db, "comments"), where("mediaId", "==", mediaId));
+            onSnapshot(q, (snapshot) => {
+                commentList.innerHTML = '';
+                if (snapshot.empty) {
+                    commentList.innerHTML = '<div style="color:var(--text-sub); font-size:0.8rem;">لا توجد تعليقات بعد. كن أول من يعلق!</div>';
+                    return;
+                }
+                snapshot.forEach(docSnap => {
+                    const c = docSnap.data();
+                    const div = document.createElement('div');
+                    div.className = 'comment-card';
+                    div.innerHTML = `
+                        <div class="comment-header">
+                            <span>${c.user}</span>
+                            <span>${new Date(c.createdAt?.toDate()).toLocaleDateString('ar-EG')}</span>
+                        </div>
+                        <div>${c.text}</div>
+                    `;
+                    commentList.appendChild(div);
+                });
+            });
+        }
+
+        window.addComment = async () => {
+            if (!currentUser) {
+                alert("يرجى تسجيل الدخول أولاً لإضافة تعليق.");
+                return;
+            }
+            const input = document.getElementById('commentText');
+            if (!input.value.trim() || !currentActiveMediaId) return;
+
+            await addDoc(collection(db, "comments"), {
+                mediaId: currentActiveMediaId,
+                user: currentUser.email,
+                text: input.value.trim(),
+                createdAt: new Date()
+            });
+
+            input.value = '';
         };
 
         window.closePlayer = () => {
             document.getElementById('playerModal').style.display = 'none';
             document.getElementById('videoPlayer').src = '';
+            currentActiveMediaId = null;
         };
 
         window.filterMedia = (type, elem) => {
