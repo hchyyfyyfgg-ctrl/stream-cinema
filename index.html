@@ -10,7 +10,6 @@
             --bg-black: #141414;
             --card-bg: #181818;
             --netflix-red: #E50914;
-            --netflix-red-hover: #b81d24;
             --text-main: #FFFFFF;
             --text-sub: #AAAAAA;
             --border-color: #333333;
@@ -19,7 +18,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
         body { background-color: var(--bg-black); color: var(--text-main); overflow-x: hidden; padding-bottom: 50px; }
 
-        /* Navbar */
         header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 4%; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
@@ -38,7 +36,6 @@
             padding: 5px 10px; border-radius: 4px; outline: none; font-size: 0.85rem; width: 180px;
         }
 
-        /* Hero Banner (Featured Content) */
         .hero {
             position: relative; height: 75vh; background-size: cover; background-position: center top;
             display: flex; align-items: center; padding: 0 4%; margin-bottom: -50px;
@@ -49,7 +46,7 @@
                         linear-gradient(90deg, rgba(20,20,20,0.9) 0%, transparent 60%);
         }
         .hero-content { position: relative; z-index: 10; max-width: 550px; }
-        .hero-title { font-size: 3rem; font-weight: 800; margin-bottom: 15px; line-height: 1.1; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); }
+        .hero-title { font-size: 3rem; font-weight: 800; margin-bottom: 15px; line-height: 1.1; }
         .hero-overview { font-size: 0.95rem; color: #ddd; margin-bottom: 20px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .hero-btns { display: flex; gap: 12px; }
         .btn-netflix {
@@ -59,18 +56,13 @@
         .btn-play { background: #fff; color: #000; }
         .btn-play:hover { background: rgba(255,255,255,0.75); }
         .btn-info { background: rgba(109, 109, 110, 0.7); color: #fff; }
-        .btn-info:hover { background: rgba(109, 109, 110, 0.4); }
 
-        /* Rows & Carousels */
         .section-row { padding: 20px 4%; position: relative; z-index: 20; }
         .row-header { font-size: 1.3rem; font-weight: bold; margin-bottom: 12px; color: #e5e5e5; }
 
-        .cards-scroll-container {
-            display: flex; gap: 12px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 0;
-        }
+        .cards-scroll-container { display: flex; gap: 12px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 0; }
         .cards-scroll-container::-webkit-scrollbar { display: none; }
 
-        /* Netflix Card Style */
         .netflix-card {
             flex: 0 0 180px; height: 260px; background-size: cover; background-position: center;
             border-radius: 4px; position: relative; cursor: pointer; transition: transform 0.3s ease, z-index 0.3s;
@@ -91,7 +83,6 @@
         }
         .action-icon:hover { background: #fff; color: #000; }
 
-        /* Admin Controls Overlay */
         #adminPanel {
             background: var(--card-bg); margin: 80px 4% 20px 4%; padding: 20px;
             border-radius: 8px; border: 1px solid var(--netflix-red); display: none;
@@ -101,17 +92,18 @@
             background: #222; border: 1px solid #444; padding: 10px; color: white; border-radius: 4px; outline: none; width: 100%;
         }
 
-        /* Modals */
+        .season-block { background: #111; border: 1px solid #333; padding: 10px; border-radius: 6px; margin-top: 10px; }
+
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 800px; border-radius: 8px; overflow: hidden; position: relative; max-height: 90vh; overflow-y: auto; color: white; }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 850px; border-radius: 8px; overflow: hidden; position: relative; max-height: 90vh; overflow-y: auto; color: white; }
         .close-btn { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.5); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; z-index: 10; }
         
         .iframe-container { position: relative; padding-bottom: 56.25%; height: 0; }
         .iframe-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-        .server-selector, .episodes-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 15px; background: #111; }
-        .server-btn, .ep-btn { background: #333; border: none; color: white; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
-        .server-btn.active, .ep-btn.active { background: var(--netflix-red); font-weight: bold; }
+        .selector-box { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 15px; background: #111; border-bottom: 1px solid #222; }
+        .select-btn { background: #222; border: 1px solid #444; color: white; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
+        .select-btn.active { background: var(--netflix-red); border-color: var(--netflix-red); font-weight: bold; }
 
         .comments-section { padding: 20px; border-top: 1px solid var(--border-color); }
         .comment-card { background: #222; padding: 10px; border-radius: 4px; margin-top: 8px; font-size: 0.85rem; }
@@ -119,7 +111,6 @@
 </head>
 <body>
 
-    <!-- Header -->
     <header id="navbar">
         <div class="logo"><i class="fas fa-play-circle"></i> STREAMFLIX</div>
         <ul class="nav-links">
@@ -134,7 +125,6 @@
         </div>
     </header>
 
-    <!-- Hero Banner (Movie Spotlight) -->
     <div class="hero" id="heroBanner">
         <div class="hero-overlay"></div>
         <div class="hero-content">
@@ -146,9 +136,9 @@
         </div>
     </div>
 
-    <!-- Admin Panel -->
+    <!-- لوحة التحكم -->
     <section id="adminPanel">
-        <h3 style="color: var(--netflix-red);"><i class="fas fa-tools"></i> لوحة التحكم (إضافة محتوى جديد)</h3>
+        <h3 style="color: var(--netflix-red);"><i class="fas fa-tools"></i> إضافة محتوى ومواسم جديدة</h3>
         <form id="addMediaForm" onsubmit="handleAddMedia(event)">
             <div class="form-grid">
                 <input type="text" id="title" placeholder="العنوان" required>
@@ -160,26 +150,28 @@
                 <input type="number" id="rating" placeholder="التقييم (مثال 8.5)" step="0.1">
                 <input type="url" id="poster" placeholder="رابط البوستر" required>
             </div>
+
+            <!-- سيرفرات الأفلام -->
             <div id="movieServers" style="margin-top:10px;">
-                <input type="url" id="movieServer1" placeholder="رابط السيرفر الأساسي (Embed)" required>
+                <input type="url" id="movieServer1" placeholder="رابط السيرفر (Embed)">
             </div>
+
+            <!-- مواسم وحلقات المسلسلات -->
             <div id="seriesFields" style="display:none; margin-top:10px;">
-                <input type="number" id="epCount" placeholder="عدد الحلقات" min="1" style="width:150px;">
-                <button type="button" class="btn-netflix btn-info" style="margin-top:5px;" onclick="generateEpisodeInputs()">توليد الحلقات</button>
-                <div id="episodesContainer" style="margin-top:10px;"></div>
+                <button type="button" class="btn-netflix btn-info" style="margin-bottom:10px;" onclick="addSeasonBlock()">+ إضافة موسم جديد</button>
+                <div id="seasonsContainer"></div>
             </div>
-            <textarea id="overview" placeholder="وصف المختصر..." rows="2" style="margin-top:10px;"></textarea>
+
+            <textarea id="overview" placeholder="وصف مختصر..." rows="2" style="margin-top:10px;"></textarea>
             <button type="submit" class="btn-netflix btn-play" style="margin-top:10px; width:100%; background:var(--netflix-red); color:white;">نشر إلى Streamflix</button>
         </form>
     </section>
 
-    <!-- Content Categories (Rows) -->
     <div class="section-row">
         <div class="row-header" id="rowTitle">الأحدث والأكثر مشاهدة</div>
         <div class="cards-scroll-container" id="mediaGrid"></div>
     </div>
 
-    <!-- Auth Modal -->
     <div class="modal" id="authModal">
         <div class="modal-content" style="max-width: 350px; padding: 25px;">
             <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
@@ -191,15 +183,19 @@
         </div>
     </div>
 
-    <!-- Video Player Modal -->
+    <!-- مشغل الفيديو مع التحكم بالمواسم والحلقات -->
     <div class="modal" id="playerModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closePlayer()">&times;</button>
             <div class="iframe-container">
                 <iframe id="videoPlayer" allowfullscreen></iframe>
             </div>
-            <div id="serverSelector" class="server-selector"></div>
-            <div id="episodesList" class="episodes-list" style="display:none;"></div>
+
+            <!-- أزرار اختيار الموسم -->
+            <div id="seasonsSelector" class="selector-box" style="display:none;"></div>
+            <!-- أزرار اختيار الحلقة -->
+            <div id="episodesSelector" class="selector-box" style="display:none;"></div>
+
             <div class="comments-section">
                 <h4><i class="fas fa-comments"></i> التعليقات</h4>
                 <div style="display:flex; gap:10px; margin-top:10px;">
@@ -213,7 +209,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -236,8 +232,8 @@
         let currentFilter = 'الكل';
         let favorites = JSON.parse(localStorage.getItem('netflix_favs') || '[]');
         let activeMediaId = null;
+        let seasonCounter = 0;
 
-        // Navbar Scroll Effect
         window.addEventListener('scroll', () => {
             document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
         });
@@ -271,7 +267,7 @@
         function setupHero(item) {
             document.getElementById('heroBanner').style.backgroundImage = `url('${item.poster}')`;
             document.getElementById('heroTitle').innerText = item.title;
-            document.getElementById('heroOverview').innerText = item.overview || 'استمتع بآلاف الأفلام والمسلسلات الحصرية عالية الدقة بدون إعلانات.';
+            document.getElementById('heroOverview').innerText = item.overview || 'استمتع بأفضل العروض حصرياً.';
             document.getElementById('heroPlayBtn').onclick = () => openPlayer(item.id);
         }
 
@@ -307,47 +303,140 @@
             });
         }
 
-        window.toggleFavorite = (id, e) => {
-            e.stopPropagation();
-            if (favorites.includes(id)) favorites = favorites.filter(i => i !== id);
-            else favorites.push(id);
-            localStorage.setItem('netflix_favs', JSON.stringify(favorites));
-            renderGrid(allMedia);
-        };
-
+        /* فتح المشغل وإدارة المواسم والحلقات */
         window.openPlayer = (id) => {
             const item = allMedia.find(m => m.id === id);
             if (!item) return;
 
             activeMediaId = id;
             const player = document.getElementById('videoPlayer');
-            const serverBox = document.getElementById('serverSelector');
-            const epList = document.getElementById('episodesList');
+            const seasonsBox = document.getElementById('seasonsSelector');
+            const epBox = document.getElementById('episodesSelector');
 
-            serverBox.innerHTML = '';
-            
-            if (item.type === 'مسلسل' && item.episodes && item.episodes.length > 0) {
-                epList.style.display = 'flex';
-                epList.innerHTML = '';
-                item.episodes.forEach((ep, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = `ep-btn ${idx === 0 ? 'active' : ''}`;
-                    btn.innerText = `حلقة ${ep.number}`;
-                    btn.onclick = () => {
-                        document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        player.src = ep.servers[0].url;
+            seasonsBox.innerHTML = '';
+            epBox.innerHTML = '';
+
+            if (item.type === 'مسلسل' && item.seasons && item.seasons.length > 0) {
+                seasonsBox.style.display = 'flex';
+                epBox.style.display = 'flex';
+
+                item.seasons.forEach((s, sIdx) => {
+                    const sBtn = document.createElement('button');
+                    sBtn.className = `select-btn ${sIdx === 0 ? 'active' : ''}`;
+                    sBtn.innerText = `الموسم ${s.seasonNumber}`;
+                    sBtn.onclick = () => {
+                        document.querySelectorAll('#seasonsSelector .select-btn').forEach(b => b.classList.remove('active'));
+                        sBtn.classList.add('active');
+                        renderEpisodes(s.episodes, player);
                     };
-                    epList.appendChild(btn);
+                    seasonsBox.appendChild(sBtn);
                 });
-                player.src = item.episodes[0].servers[0].url;
+
+                renderEpisodes(item.seasons[0].episodes, player);
             } else {
-                epList.style.display = 'none';
+                seasonsBox.style.display = 'none';
+                epBox.style.display = 'none';
                 if(item.servers && item.servers.length > 0) player.src = item.servers[0].url;
             }
 
             loadComments(id);
             document.getElementById('playerModal').style.display = 'flex';
+        };
+
+        function renderEpisodes(episodes, player) {
+            const epBox = document.getElementById('episodesSelector');
+            epBox.innerHTML = '';
+
+            if (!episodes || episodes.length === 0) return;
+
+            episodes.forEach((ep, epIdx) => {
+                const epBtn = document.createElement('button');
+                epBtn.className = `select-btn ${epIdx === 0 ? 'active' : ''}`;
+                epBtn.innerText = `حلقة ${ep.number}`;
+                epBtn.onclick = () => {
+                    document.querySelectorAll('#episodesSelector .select-btn').forEach(b => b.classList.remove('active'));
+                    epBtn.classList.add('active');
+                    player.src = ep.url;
+                };
+                epBox.appendChild(epBtn);
+            });
+
+            player.src = episodes[0].url;
+        }
+
+        /* إضافة مواسم جديدة ديناميكياً في لوحة الإدارة */
+        window.addSeasonBlock = () => {
+            seasonCounter++;
+            const container = document.getElementById('seasonsContainer');
+            const block = document.createElement('div');
+            block.className = 'season-block';
+            block.id = `season_block_${seasonCounter}`;
+            block.innerHTML = `
+                <div style="display:flex; justify-between; align-items:center; margin-bottom:8px;">
+                    <strong>الموسم ${seasonCounter}</strong>
+                    <input type="number" class="ep-count-input" placeholder="عدد الحلقات" min="1" style="width:120px;">
+                    <button type="button" class="btn-netflix btn-info" style="padding:4px 8px;" onclick="generateEpisodesForSeason(${seasonCounter})">توليد الحقول</button>
+                </div>
+                <div id="episodes_container_${seasonCounter}"></div>
+            `;
+            container.appendChild(block);
+        };
+
+        window.generateEpisodesForSeason = (sNum) => {
+            const block = document.getElementById(`season_block_${sNum}`);
+            const count = parseInt(block.querySelector('.ep-count-input').value) || 0;
+            const container = document.getElementById(`episodes_container_${sNum}`);
+            container.innerHTML = '';
+
+            for (let i = 1; i <= count; i++) {
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.gap = '8px';
+                div.style.marginTop = '5px';
+                div.innerHTML = `
+                    <span style="font-size:0.8rem; width:50px;">ح ${i}:</span>
+                    <input type="url" class="ep-url-input" data-ep="${i}" placeholder="رابط الحلقة (Embed)" required>
+                `;
+                container.appendChild(div);
+            }
+        };
+
+        window.handleAddMedia = async (e) => {
+            e.preventDefault();
+            const type = document.getElementById('type').value;
+            let servers = [], seasons = [];
+
+            if (type === 'فيلم') {
+                servers.push({ name: 'سيرفر 1', url: document.getElementById('movieServer1').value });
+            } else {
+                const blocks = document.querySelectorAll('.season-block');
+                blocks.forEach((block, idx) => {
+                    const epInputs = block.querySelectorAll('.ep-url-input');
+                    let episodes = [];
+                    epInputs.forEach(input => {
+                        if (input.value.trim()) {
+                            episodes.push({ number: input.getAttribute('data-ep'), url: input.value.trim() });
+                        }
+                    });
+                    if (episodes.length > 0) {
+                        seasons.push({ seasonNumber: idx + 1, episodes });
+                    }
+                });
+            }
+
+            await addDoc(collection(db, "media"), {
+                title: document.getElementById('title').value,
+                type: type,
+                year: document.getElementById('year').value || '2024',
+                rating: document.getElementById('rating').value || '8.0',
+                poster: document.getElementById('poster').value,
+                overview: document.getElementById('overview').value,
+                servers, seasons
+            });
+
+            document.getElementById('addMediaForm').reset();
+            document.getElementById('seasonsContainer').innerHTML = '';
+            seasonCounter = 0;
         };
 
         async function loadComments(id) {
@@ -368,6 +457,14 @@
             if(!txt || !activeMediaId) return;
             await addDoc(collection(db, "comments"), { mediaId: activeMediaId, user: currentUser.email, text: txt });
             document.getElementById('commentText').value = '';
+        };
+
+        window.toggleFavorite = (id, e) => {
+            e.stopPropagation();
+            if (favorites.includes(id)) favorites = favorites.filter(i => i !== id);
+            else favorites.push(id);
+            localStorage.setItem('netflix_favs', JSON.stringify(favorites));
+            renderGrid(allMedia);
         };
 
         window.closePlayer = () => {
@@ -405,27 +502,6 @@
             const type = document.getElementById('type').value;
             document.getElementById('movieServers').style.display = type === 'فيلم' ? 'block' : 'none';
             document.getElementById('seriesFields').style.display = type === 'مسلسل' ? 'block' : 'none';
-        };
-
-        window.handleAddMedia = async (e) => {
-            e.preventDefault();
-            const type = document.getElementById('type').value;
-            let servers = [], episodes = [];
-
-            if(type === 'فيلم') {
-                servers.push({ name: 'سيرفر 1', url: document.getElementById('movieServer1').value });
-            }
-
-            await addDoc(collection(db, "media"), {
-                title: document.getElementById('title').value,
-                type: type,
-                year: document.getElementById('year').value || '2024',
-                rating: document.getElementById('rating').value || '8.0',
-                poster: document.getElementById('poster').value,
-                overview: document.getElementById('overview').value,
-                servers, episodes
-            });
-            document.getElementById('addMediaForm').reset();
         };
     </script>
 </body>
