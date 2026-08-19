@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سينما ستريم - المطور</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #e11d48;
+            --accent-hover: #be123c;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 40px; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background: rgba(15, 23, 42, 0.95);
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+        .user-nav { display: flex; align-items: center; gap: 10px; }
+        .btn { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn:hover { background: var(--accent-hover); }
+
+        .controls-bar {
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            padding: 20px 5% 10px 5%; gap: 15px;
+        }
+
+        .tabs { display: flex; gap: 8px; }
+        .tab-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main); padding: 8px 16px; border-radius: 20px; cursor: pointer; }
+        .tab-btn.active { background: var(--accent); border-color: var(--accent); }
+
+        .search-box { position: relative; min-width: 250px; }
+        .search-box input {
+            width: 100%; background: var(--card-bg); border: 1px solid var(--border);
+            padding: 8px 35px 8px 12px; border-radius: 20px; color: white; outline: none;
+        }
+        .search-box i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
+
+        #adminPanel {
+            background: var(--card-bg); margin: 20px 5%; padding: 20px;
+            border-radius: 12px; border: 1px solid var(--accent); display: none;
+        }
+
+        .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: var(--bg-color); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+        .stat-card h4 { color: var(--text-sub); font-size: 0.8rem; }
+        .stat-card span { font-size: 1.2rem; font-weight: bold; color: var(--accent); }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
+        .form-grid input, .form-grid select, textarea {
+            background: var(--bg-color); border: 1px solid var(--border); padding: 10px;
+            color: white; border-radius: 6px; outline: none; width: 100%;
+        }
+
+        #episodesContainer { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .ep-input-group { display: flex; gap: 10px; align-items: center; }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 0 5%; }
+
+        .media-card {
+            background: var(--card-bg); border-radius: 10px; overflow: hidden;
+            position: relative; transition: transform 0.2s; border: 1px solid var(--border);
+        }
+        .media-card:hover { transform: translateY(-5px); }
+        .media-card img { width: 100%; height: 220px; object-fit: cover; cursor: pointer; }
+        .badge { position: absolute; top: 8px; right: 8px; background: rgba(15, 23, 42, 0.8); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; backdrop-filter: blur(4px); }
+        
+        .media-info { padding: 10px; }
+        .media-title { font-size: 0.9rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .media-meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub); margin-top: 5px; }
+        .rating { color: #f59e0b; }
+
+        .delete-btn {
+            position: absolute; top: 8px; left: 8px; background: var(--accent);
+            color: white; border: none; width: 28px; height: 28px; border-radius: 50%;
+            cursor: pointer; display: none; align-items: center; justify-content: center;
+        }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 750px; border-radius: 12px; overflow: hidden; position: relative; padding: 20px; }
+        .close-btn { position: absolute; top: 10px; left: 10px; background: var(--accent); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+        .iframe-container { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; }
+        .iframe-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        .empty-state { text-align: center; color: var(--text-sub); padding: 50px 0; width: 100%; grid-column: 1 / -1; }
+
+        /* Episodes Selector inside Player */
+        .episodes-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; max-height: 120px; overflow-y: auto; padding-top: 5px; }
+        .ep-btn { background: var(--bg-color); border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .ep-btn.active { background: var(--accent); border-color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo"><i class="fas fa-play-circle"></i> سينما ستريم</div>
+        <div class="user-nav">
+            <span id="userInfo" style="font-size: 0.85rem; color: var(--text-sub);"></span>
+            <button id="authBtn" class="btn" onclick="openAuthModal()">تسجيل الدخول</button>
+        </div>
+    </header>
+
+    <section id="adminPanel">
+        <h3 style="margin-bottom: 10px;"><i class="fas fa-sliders"></i> لوحة تحكم الإدارة</h3>
+        
+        <div class="admin-stats">
+            <div class="stat-card"><h4>إجمالي المحتوى</h4><span id="statTotal">0</span></div>
+            <div class="stat-card"><h4>الأفلام</h4><span id="statMovies">0</span></div>
+            <div class="stat-card"><h4>المسلسلات</h4><span id="statSeries">0</span></div>
+        </div>
+
+        <form id="addMediaForm" onsubmit="handleAddMedia(event)">
+            <div class="form-grid">
+                <input type="text" id="title" placeholder="عنوان الفيلم / المسلسل" required>
+                <select id="type" onchange="toggleTypeFields()">
+                    <option value="فيلم">فيلم</option>
+                    <option value="مسلسل">مسلسل</option>
+                </select>
+                <input type="number" id="year" placeholder="سنة الإنتاج (مثال: 2024)" min="1900" max="2099">
+                <input type="number" id="rating" placeholder="التقييم (مثال: 8.5)" step="0.1" min="1" max="10">
+                <input type="url" id="poster" placeholder="رابط البوستر (Image URL)" required>
+                
+                <!-- فيلم: رابط واحد -->
+                <input type="url" id="singleVideoUrl" placeholder="رابط الفيديو (Embed URL)">
+            </div>
+
+            <!-- مسلسل: عدد الحلقات وروابطها -->
+            <div id="seriesFields" style="display: none; margin-top: 10px;">
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                    <input type="number" id="epCount" placeholder="عدد الحلقات" min="1" max="100" style="width: 150px;">
+                    <button type="button" class="btn" style="background: #334155;" onclick="generateEpisodeInputs()">توليد حقول الحلقات</button>
+                </div>
+                <div id="episodesContainer"></div>
+            </div>
+
+            <textarea id="overview" placeholder="وصف الفيلم أو المسلسل..." rows="2" style="margin-top: 10px;"></textarea>
+            <button type="submit" class="btn" style="margin-top: 10px; width: 100%;"><i class="fas fa-plus-circle"></i> نشر المحتوى</button>
+        </form>
+    </section>
+
+    <div class="controls-bar">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="filterMedia('الكل', this)">الكل</button>
+            <button class="tab-btn" onclick="filterMedia('فيلم', this)">الأفلام</button>
+            <button class="tab-btn" onclick="filterMedia('مسلسل', this)">المسلسلات</button>
+        </div>
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="ابحث عن محتوى..." oninput="handleSearch()">
+        </div>
+    </div>
+
+    <main class="grid-container" id="mediaGrid">
+        <div class="empty-state">جاري تحميل المحتوى...</div>
+    </main>
+
+    <div class="modal" id="authModal">
+        <div class="modal-content" style="max-width: 350px;">
+            <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
+            <h3 style="margin-bottom: 15px;" id="authTitle">تسجيل الدخول</h3>
+            <input type="email" id="email" value="abod@dmail.com" placeholder="البريد الإلكتروني" style="width:100%; padding:10px; margin-bottom:10px; background:var(--bg-color); border:1px solid var(--border); color:white; border-radius:6px;">
+            <input type="password" id="password" value="mmnnoopp99" placeholder="كلمة المرور" style="width:100%; padding:10px; margin-bottom:15px; background:var(--bg-color); border:1px solid var(--border); color:white; border-radius:6px;">
+            <button class="btn" style="width:100%" onclick="handleAuth()">دخول</button>
+            <button class="btn" style="width:100%; margin-top:8px; background:#334155;" onclick="quickAdminAuth()">دخول سريع (Admin)</button>
+            <p style="text-align:center; font-size:0.8rem; color:var(--text-sub); margin-top:10px; cursor:pointer;" onclick="toggleAuthMode()" id="toggleAuthText">حساب جديد؟ إنشاء حساب</p>
+        </div>
+    </div>
+
+    <div class="modal" id="playerModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closePlayer()">&times;</button>
+            <h3 id="modalTitle"></h3>
+            <p id="modalOverview" style="color: var(--text-sub); font-size: 0.85rem; margin-top: 5px;"></p>
+            
+            <div id="episodesListContainer" style="display: none; margin-top: 10px;">
+                <label style="font-size: 0.8rem; color: var(--text-sub);">اختر الحلقة:</label>
+                <div class="episodes-list" id="episodesList"></div>
+            </div>
+
+            <div class="iframe-container">
+                <iframe id="videoPlayer" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyALvUGKfiOLGjbnpldZ9IQfCR9sVMHU4WY",
+            authDomain: "showa-4ea31.firebaseapp.com",
+            databaseURL: "https://showa-4ea31-default-rtdb.firebaseio.com",
+            projectId: "showa-4ea31",
+            storageBucket: "showa-4ea31.firebasestorage.app",
+            messagingSenderId: "161674174849",
+            appId: "1:161674174849:web:2165916f33fe592db60880",
+            measurementId: "G-M7WQPWL9LM"
+        };
+
+        const ADMIN_EMAIL = "abod@dmail.com";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let isSignUp = false;
+        let allMedia = [];
+        let currentFilter = 'الكل';
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const authBtn = document.getElementById('authBtn');
+            const userInfo = document.getElementById('userInfo');
+            const adminPanel = document.getElementById('adminPanel');
+
+            if (user) {
+                userInfo.innerText = user.email;
+                authBtn.innerText = "خروج";
+                authBtn.onclick = () => signOut(auth);
+                adminPanel.style.display = (user.email === ADMIN_EMAIL) ? 'block' : 'none';
+            } else {
+                userInfo.innerText = '';
+                authBtn.innerText = "تسجيل الدخول";
+                authBtn.onclick = () => openAuthModal();
+                adminPanel.style.display = 'none';
+            }
+            loadMediaData();
+        });
+
+        window.toggleTypeFields = () => {
+            const type = document.getElementById('type').value;
+            const singleVideoUrl = document.getElementById('singleVideoUrl');
+            const seriesFields = document.getElementById('seriesFields');
+
+            if (type === 'مسلسل') {
+                singleVideoUrl.style.display = 'none';
+                seriesFields.style.display = 'block';
+            } else {
+                singleVideoUrl.style.display = 'block';
+                seriesFields.style.display = 'none';
+            }
+        };
+
+        window.generateEpisodeInputs = () => {
+            const count = parseInt(document.getElementById('epCount').value) || 0;
+            const container = document.getElementById('episodesContainer');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= count; i++) {
+                const group = document.createElement('div');
+                group.className = 'ep-input-group';
+                group.innerHTML = `
+                    <span style="font-size:0.8rem; width: 60px;">حلقة ${i}:</span>
+                    <input type="url" class="ep-url-input" data-ep="${i}" placeholder="رابط الحلقة ${i}" required>
+                `;
+                container.appendChild(group);
+            }
+        };
+
+        window.handleAddMedia = async (e) => {
+            e.preventDefault();
+            if (!currentUser || currentUser.email !== ADMIN_EMAIL) return;
+
+            const type = document.getElementById('type').value;
+            let episodes = [];
+
+            if (type === 'مسلسل') {
+                const inputs = document.querySelectorAll('.ep-url-input');
+                inputs.forEach(input => {
+                    if (input.value.trim()) {
+                        episodes.push({
+                            number: input.getAttribute('data-ep'),
+                            url: input.value.trim()
+                        });
+                    }
+                });
+            }
+
+            const mediaData = {
+                title: document.getElementById('title').value,
+                type: type,
+                year: document.getElementById('year').value || 'غير محدد',
+                rating: document.getElementById('rating').value || 'N/A',
+                poster: document.getElementById('poster').value,
+                videoUrl: type === 'فيلم' ? document.getElementById('singleVideoUrl').value : '',
+                episodes: episodes,
+                overview: document.getElementById('overview').value,
+                createdAt: new Date()
+            };
+
+            await addDoc(collection(db, "media"), mediaData);
+            document.getElementById('addMediaForm').reset();
+            document.getElementById('episodesContainer').innerHTML = '';
+        };
+
+        function loadMediaData() {
+            onSnapshot(collection(db, "media"), (snapshot) => {
+                allMedia = [];
+                snapshot.forEach(docSnap => {
+                    allMedia.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                updateStats();
+                renderCards(allMedia);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('statTotal').innerText = allMedia.length;
+            document.getElementById('statMovies').innerText = allMedia.filter(m => m.type === 'فيلم').length;
+            document.getElementById('statSeries').innerText = allMedia.filter(m => m.type === 'مسلسل').length;
+        }
+
+        function renderCards(list) {
+            const grid = document.getElementById('mediaGrid');
+            grid.innerHTML = '';
+
+            let filtered = list;
+            if (currentFilter !== 'الكل') {
+                filtered = filtered.filter(item => item.type === currentFilter);
+            }
+
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (query) {
+                filtered = filtered.filter(item => item.title.toLowerCase().includes(query));
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="empty-state">لا يوجد محتوى يطابق البحث.</div>';
+                return;
+            }
+
+            filtered.forEach((item) => {
+                const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+                const card = document.createElement('div');
+                card.className = 'media-card';
+                card.innerHTML = `
+                    <span class="badge">${item.type} ${item.type === 'مسلسل' && item.episodes ? `(${item.episodes.length} حلقة)` : ''}</span>
+                    ${isAdmin ? `<button class="delete-btn" style="display:flex;" onclick="deleteMedia('${item.id}')"><i class="fas fa-trash"></i></button>` : ''}
+                    <img src="${item.poster}" alt="${item.title}" onclick="openPlayer('${item.id}')">
+                    <div class="media-info">
+                        <div class="media-title">${item.title}</div>
+                        <div class="media-meta">
+                            <span>${item.year}</span>
+                            <span class="rating"><i class="fas fa-star"></i> ${item.rating}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        window.openPlayer = (id) => {
+            const item = allMedia.find(m => m.id === id);
+            if (!item) return;
+
+            document.getElementById('modalTitle').innerText = item.title;
+            document.getElementById('modalOverview').innerText = item.overview || '';
+
+            const epContainer = document.getElementById('episodesListContainer');
+            const epList = document.getElementById('episodesList');
+            const player = document.getElementById('videoPlayer');
+
+            if (item.type === 'مسلسل' && item.episodes && item.episodes.length > 0) {
+                epContainer.style.display = 'block';
+                epList.innerHTML = '';
+
+                item.episodes.forEach((ep, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = `ep-btn ${index === 0 ? 'active' : ''}`;
+                    btn.innerText = `حلقة ${ep.number}`;
+                    btn.onclick = () => {
+                        document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        player.src = ep.url;
+                    };
+                    epList.appendChild(btn);
+                });
+
+                player.src = item.episodes[0].url;
+            } else {
+                epContainer.style.display = 'none';
+                player.src = item.videoUrl || '';
+            }
+
+            document.getElementById('playerModal').style.display = 'flex';
+        };
+
+        window.closePlayer = () => {
+            document.getElementById('playerModal').style.display = 'none';
+            document.getElementById('videoPlayer').src = '';
+        };
+
+        window.filterMedia = (type, elem) => {
+            currentFilter = type;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            elem.classList.add('active');
+            renderCards(allMedia);
+        };
+
+        window.handleSearch = () => renderCards(allMedia);
+
+        window.deleteMedia = async (id) => {
+            if (confirm("هل أنت تأكد من حذف هذا العنصر؟")) {
+                await deleteDoc(doc(db, "media", id));
+            }
+        };
+
+        window.handleAuth = async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                if (isSignUp) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+                closeModal('authModal');
+            } catch (err) {
+                alert("حدث خطأ: " + err.message);
+            }
+        };
+
+        window.quickAdminAuth = async () => {
+            document.getElementById('email').value = "abod@dmail.com";
+            document.getElementById('password').value = "mmnnoopp99";
+            try {
+                await signInWithEmailAndPassword(auth, "abod@dmail.com", "mmnnoopp99");
+                closeModal('authModal');
+            } catch (err) {
+                try {
+                    await createUserWithEmailAndPassword(auth, "abod@dmail.com", "mmnnoopp99");
+                    closeModal('authModal');
+                } catch (createErr) {
+                    alert("حدث خطأ أثناء الدخول: " + createErr.message);
+                }
+            }
+        };
+
+        window.toggleAuthMode = () => {
+            isSignUp = !isSignUp;
+            document.getElementById('authTitle').innerText = isSignUp ? "حساب جديد" : "تسجيل الدخول";
+            document.getElementById('toggleAuthText').innerText = isSignUp ? "لديك حساب؟ دخول" : "حساب جديد؟ إنشاء حساب";
+        };
+
+        window.openAuthModal = () => document.getElementById('authModal').style.display = 'flex';
+        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+    </script>
+</body>
+</html>
