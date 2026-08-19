@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>سينما ستريم - CINEMA STREAM</title>
+    <title>سينما ستريم - CINEMA STREAM PRO</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --bg-black: #141414;
-            --card-bg: #181818;
+            --card-bg: #1f1f1f;
             --main-red: #E50914;
+            --accent-gold: #FFD700;
             --text-main: #FFFFFF;
             --border-color: #333333;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-black); color: var(--text-main); overflow-x: hidden; padding-bottom: 70px; }
+        body { background-color: var(--bg-black); color: var(--text-main); overflow-x: hidden; padding-bottom: 80px; }
 
         /* Header Navigation */
         header {
             display: flex; flex-direction: column; gap: 10px;
-            padding: 12px 4%; background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(20,20,20,0.8) 100%);
+            padding: 12px 4%; background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(10px);
             position: fixed; top: 0; width: 100%; z-index: 1000; transition: background 0.3s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        header.scrolled { background-color: var(--bg-black); }
+        header.scrolled { background-color: rgba(10, 10, 10, 0.98); }
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .logo { font-size: 1.4rem; font-weight: 900; color: var(--main-red); letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
@@ -31,94 +33,99 @@
         .user-controls { display: flex; align-items: center; gap: 8px; }
         .search-input {
             background: rgba(255,255,255,0.1); border: 1px solid #444; color: white;
-            padding: 6px 10px; border-radius: 20px; outline: none; font-size: 0.8rem; width: 130px; transition: 0.3s;
+            padding: 6px 12px; border-radius: 20px; outline: none; font-size: 0.8rem; width: 120px; transition: 0.3s;
         }
-        .search-input:focus { width: 160px; background: rgba(0,0,0,0.8); border-color: var(--main-red); }
+        .search-input:focus { width: 150px; background: rgba(0,0,0,0.9); border-color: var(--main-red); }
 
-        .nav-links { display: flex; gap: 15px; list-style: none; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; width: 100%; }
+        .nav-links { display: flex; gap: 12px; list-style: none; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; width: 100%; }
         .nav-links::-webkit-scrollbar { display: none; }
-        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 0.85rem; cursor: pointer; transition: color 0.2s; }
-        .nav-links a:hover, .nav-links a.active { color: #fff; font-weight: bold; border-bottom: 2px solid var(--main-red); padding-bottom: 2px; }
+        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 0.85rem; cursor: pointer; transition: color 0.2s; padding: 2px 6px; border-radius: 4px; }
+        .nav-links a.active { color: #fff; font-weight: bold; background: var(--main-red); }
 
         /* Hero Banner */
         .hero {
-            position: relative; height: 55vh; min-height: 380px; background-size: cover; background-position: center top;
-            display: flex; align-items: flex-end; padding: 0 4% 30px 4%; margin-top: 80px;
+            position: relative; height: 50vh; min-height: 360px; background-size: cover; background-position: center top;
+            display: flex; align-items: flex-end; padding: 0 4% 20px 4%; margin-top: 85px; border-radius: 0 0 15px 15px; overflow: hidden;
         }
         .hero-overlay {
             position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(20,20,20,0) 0%, rgba(20,20,20,0.7) 60%, var(--bg-black) 100%);
+            background: linear-gradient(180deg, rgba(20,20,20,0) 0%, rgba(20,20,20,0.6) 50%, var(--bg-black) 100%);
         }
         .hero-content { position: relative; z-index: 10; max-width: 100%; }
-        .hero-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; line-height: 1.2; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
-        .hero-overview { font-size: 0.85rem; color: #ccc; margin-bottom: 15px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .badge-trending { background: var(--accent-gold); color: #000; font-size: 0.65rem; font-weight: bold; padding: 2px 6px; border-radius: 3px; display: inline-block; margin-bottom: 6px; }
+        .hero-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; line-height: 1.2; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); }
+        .hero-overview { font-size: 0.8rem; color: #ccc; margin-bottom: 12px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         
+        .hero-btns { display: flex; gap: 8px; }
         .btn-stream {
-            padding: 8px 18px; border-radius: 4px; font-size: 0.9rem; font-weight: bold;
+            padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;
             border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;
         }
         .btn-play { background: #fff; color: #000; }
+        .btn-play:active { transform: scale(0.95); }
+        .btn-bookmark { background: rgba(255,255,255,0.2); color: #fff; backdrop-filter: blur(5px); }
         .btn-admin { background: var(--main-red); color: #fff; }
-        .btn-info { background: rgba(109, 109, 110, 0.7); color: #fff; }
 
-        /* Content Row & Cards */
+        /* Content Rows */
         .section-row { padding: 15px 4%; position: relative; z-index: 20; }
-        .row-header { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: #e5e5e5; }
+        .row-header { font-size: 1.05rem; font-weight: bold; margin-bottom: 10px; color: #e5e5e5; display: flex; align-items: center; justify-content: space-between; }
+        .row-header span { font-size: 0.75rem; color: var(--main-red); cursor: pointer; }
 
-        .cards-scroll-container { display: flex; gap: 10px; overflow-x: auto; scroll-behavior: smooth; padding: 5px 0 15px 0; }
+        .cards-scroll-container { display: flex; gap: 12px; overflow-x: auto; scroll-behavior: smooth; padding: 5px 0 10px 0; }
         .cards-scroll-container::-webkit-scrollbar { display: none; }
 
         .stream-card {
-            flex: 0 0 120px; height: 180px; background-size: cover; background-position: center;
-            border-radius: 6px; position: relative; cursor: pointer; transition: transform 0.2s; overflow: hidden;
+            flex: 0 0 125px; height: 185px; background-size: cover; background-position: center;
+            border-radius: 8px; position: relative; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
         }
         .stream-card:active { transform: scale(0.95); }
 
+        .card-tag { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); font-size: 0.6rem; padding: 2px 5px; border-radius: 4px; color: #fff; backdrop-filter: blur(4px); }
         .card-details {
-            position: absolute; bottom: 0; inset-x: 0; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%);
-            padding: 8px 6px; display: flex; flex-direction: column; gap: 4px;
+            position: absolute; bottom: 0; inset-x: 0; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.95) 100%);
+            padding: 8px 6px; display: flex; flex-direction: column; gap: 3px;
         }
         .card-title { font-size: 0.75rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+        .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
         .action-icon {
-            width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.5);
-            display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: #fff; border: 1px solid #fff;
+            width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #fff; border: 1px solid rgba(255,255,255,0.3);
         }
 
         /* Admin Panel Mobile Friendly */
         #adminPanel {
             background: var(--card-bg); margin: 90px 4% 10px 4%; padding: 15px;
-            border-radius: 8px; border: 1px solid var(--main-red); display: none;
+            border-radius: 10px; border: 1px solid var(--main-red); display: none;
         }
         .form-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
         .form-grid input, .form-grid select, textarea {
-            background: #222; border: 1px solid #444; padding: 10px; color: white; border-radius: 4px; outline: none; width: 100%; font-size: 0.85rem;
+            background: #111; border: 1px solid #333; padding: 10px; color: white; border-radius: 6px; outline: none; width: 100%; font-size: 0.85rem;
         }
 
         .season-block { background: #111; border: 1px solid #333; padding: 10px; border-radius: 6px; margin-top: 10px; }
 
         /* Modals & Player Responsive */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; padding: 10px; }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 600px; border-radius: 8px; overflow: hidden; position: relative; max-height: 95vh; overflow-y: auto; color: white; }
-        .close-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 1rem; }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 650px; border-radius: 10px; overflow: hidden; position: relative; max-height: 95vh; overflow-y: auto; color: white; }
+        .close-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 1.1rem; }
         
         .iframe-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
         .iframe-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
         .selector-box { display: flex; overflow-x: auto; gap: 6px; padding: 10px; background: #111; border-bottom: 1px solid #222; }
         .selector-box::-webkit-scrollbar { display: none; }
-        .select-btn { flex: 0 0 auto; background: #222; border: 1px solid #444; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+        .select-btn { flex: 0 0 auto; background: #222; border: 1px solid #444; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; }
         .select-btn.active { background: var(--main-red); border-color: var(--main-red); font-weight: bold; }
 
         .comments-section { padding: 12px; border-top: 1px solid var(--border-color); }
-        .comment-card { background: #222; padding: 8px; border-radius: 4px; margin-top: 6px; font-size: 0.75rem; word-break: break-word; }
+        .comment-card { background: #111; padding: 8px; border-radius: 5px; margin-top: 6px; font-size: 0.75rem; word-break: break-word; border: 1px solid #222; }
 
-        /* Desktop Adjustments */
         @media (min-width: 768px) {
             header { flex-direction: row; padding: 15px 4%; }
             .nav-links { width: auto; }
-            .hero { height: 70vh; }
-            .hero-title { font-size: 2.8rem; }
+            .hero { height: 65vh; }
+            .hero-title { font-size: 2.5rem; }
             .stream-card { flex: 0 0 160px; height: 240px; }
             .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
         }
@@ -126,20 +133,21 @@
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- Header Navigation -->
     <header id="navbar">
         <div class="top-bar">
-            <div class="logo"><i class="fas fa-film"></i> سينما ستريم</div>
+            <div class="logo"><i class="fas fa-play-circle"></i> سينما ستريم</div>
             <div class="user-controls">
-                <input type="text" class="search-input" id="searchInput" placeholder="بحث..." oninput="handleSearch()">
+                <input type="text" class="search-input" id="searchInput" placeholder="بحث عن فيلم..." oninput="handleSearch()">
                 <button id="authBtn" class="btn-stream btn-admin" style="padding: 4px 10px; font-size: 0.75rem;" onclick="openAuthModal()">المشرف</button>
             </div>
         </div>
         <ul class="nav-links">
-            <li><a class="active" onclick="filterCategory('الكل')">الرئيسية</a></li>
-            <li><a onclick="filterCategory('مسلسل')">المسلسلات</a></li>
-            <li><a onclick="filterCategory('فيلم')">الأفلام</a></li>
-            <li><a onclick="filterCategory('المفضلة')">قائمتي</a></li>
+            <li><a class="active" onclick="filterCategory('الكل', event)">الرئيسية</a></li>
+            <li><a onclick="filterCategory('مسلسل', event)">المسلسلات</a></li>
+            <li><a onclick="filterCategory('فيلم', event)">الأفلام</a></li>
+            <li><a onclick="filterCategory('المفضلة', event)">المفضلة</a></li>
+            <li><a onclick="filterCategory('المشاهدة لاحقاً', event)">قائمة الحفظ</a></li>
         </ul>
     </header>
 
@@ -147,17 +155,19 @@
     <div class="hero" id="heroBanner">
         <div class="hero-overlay"></div>
         <div class="hero-content">
+            <span class="badge-trending"><i class="fas fa-fire"></i> مقترح لك</span>
             <h1 class="hero-title" id="heroTitle">سينما ستريم</h1>
-            <p class="hero-overview" id="heroOverview">شاهد أحدث الأفلام والمسلسلات بجودة عالية.</p>
-            <div>
-                <button class="btn-stream btn-play" id="heroPlayBtn"><i class="fas fa-play"></i> مشاهدة</button>
+            <p class="hero-overview" id="heroOverview">شاهد أحدث الأفلام والمسلسلات بجودة عالية وسيرفرات سريعة.</p>
+            <div class="hero-btns">
+                <button class="btn-stream btn-play" id="heroPlayBtn"><i class="fas fa-play"></i> تشغيل الأن</button>
+                <button class="btn-stream btn-bookmark" id="heroBookmarkBtn" onclick="toggleHeroBookmark()"><i class="fas fa-bookmark"></i> لحفظه</button>
             </div>
         </div>
     </div>
 
     <!-- لوحة المشرف -->
     <section id="adminPanel">
-        <h3 style="color: var(--main-red); font-size: 1rem;"><i class="fas fa-plus-circle"></i> إضافة عمل جديد</h3>
+        <h3 style="color: var(--main-red); font-size: 1rem;"><i class="fas fa-plus-circle"></i> إضافة فيلم / مسلسل جديد</h3>
         <form id="addMediaForm" onsubmit="handleAddMedia(event)">
             <div class="form-grid">
                 <input type="text" id="title" placeholder="عنوان العمل" required>
@@ -165,38 +175,40 @@
                     <option value="فيلم">فيلم</option>
                     <option value="مسلسل">مسلسل</option>
                 </select>
-                <input type="number" id="year" placeholder="السنة">
+                <input type="number" id="year" placeholder="السنة (مثال 2024)">
                 <input type="number" id="rating" placeholder="التقييم (مثال 8.5)" step="0.1">
-                <input type="url" id="poster" placeholder="رابط البوستر" required>
+                <input type="url" id="poster" placeholder="رابط البوستر المباشر" required>
             </div>
 
             <div id="movieServers" style="margin-top:10px;">
-                <input type="url" id="movieServer1" placeholder="رابط سيرفر الفيلم (Embed)">
+                <label style="font-size:0.75rem; color:#aaa;">سيرفرات الفيلم (يمكنك إضافة أكثر من سيرفر):</label>
+                <input type="url" id="movieServer1" placeholder="رابط سيرفر 1 (Main Embed)" style="margin-top:4px;">
+                <input type="url" id="movieServer2" placeholder="رابط سيرفر 2 (احتياطي)" style="margin-top:4px;">
             </div>
 
             <div id="seriesFields" style="display:none; margin-top:10px;">
-                <button type="button" class="btn-stream btn-info" style="margin-bottom:10px; font-size:0.8rem;" onclick="addSeasonBlock()">+ إضافة موسم</button>
+                <button type="button" class="btn-stream btn-bookmark" style="margin-bottom:10px; font-size:0.8rem;" onclick="addSeasonBlock()">+ إضافة موسم</button>
                 <div id="seasonsContainer"></div>
             </div>
 
-            <textarea id="overview" placeholder="نبذة مختصرة..." rows="2" style="margin-top:10px;"></textarea>
-            <button type="submit" class="btn-stream btn-admin" style="margin-top:10px; width:100%; justify-content:center;">نشر العمل</button>
+            <textarea id="overview" placeholder="نبذة مختصرة عن القصة..." rows="2" style="margin-top:10px;"></textarea>
+            <button type="submit" class="btn-stream btn-admin" style="margin-top:10px; width:100%; justify-content:center;">نشر العمل في التطبيق</button>
         </form>
     </section>
 
-    <!-- Content Rows -->
+    <!-- Main Content Rows -->
     <div class="section-row">
         <div class="row-header" id="rowTitle">الأحدث والأكثر مشاهدة</div>
         <div class="cards-scroll-container" id="mediaGrid"></div>
     </div>
 
-    <!-- Modal Login -->
+    <!-- Auth Modal -->
     <div class="modal" id="authModal">
         <div class="modal-content" style="max-width: 320px; padding: 20px;">
             <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
-            <h3 style="margin-bottom: 12px; text-align:center; color: var(--main-red);"><i class="fas fa-lock"></i> دخول المشرف</h3>
-            <input type="email" id="email" value="abod@dmail.com" placeholder="البريد الإلكتروني" style="width:100%; padding:8px; margin-bottom:8px; background:#222; border:1px solid #444; color:white; border-radius:4px; font-size:0.85rem;">
-            <input type="password" id="password" value="mmnnoopp99" placeholder="كلمة المرور" style="width:100%; padding:8px; margin-bottom:12px; background:#222; border:1px solid #444; color:white; border-radius:4px; font-size:0.85rem;">
+            <h3 style="margin-bottom: 12px; text-align:center; color: var(--main-red);"><i class="fas fa-user-shield"></i> لوحة المشرف</h3>
+            <input type="email" id="email" value="abod@dmail.com" placeholder="البريد الإلكتروني" style="width:100%; padding:8px; margin-bottom:8px; background:#111; border:1px solid #444; color:white; border-radius:4px; font-size:0.85rem;">
+            <input type="password" id="password" value="mmnnoopp99" placeholder="كلمة المرور" style="width:100%; padding:8px; margin-bottom:12px; background:#111; border:1px solid #444; color:white; border-radius:4px; font-size:0.85rem;">
             <button class="btn-stream btn-admin" style="width:100%; justify-content:center;" onclick="handleAuth()">دخول</button>
         </div>
     </div>
@@ -209,13 +221,17 @@
                 <iframe id="videoPlayer" allowfullscreen></iframe>
             </div>
 
+            <!-- Server Selector for Movies -->
+            <div id="movieServerSelector" class="selector-box" style="display:none;"></div>
+
+            <!-- Seasons & Episodes Selectors for Series -->
             <div id="seasonsSelector" class="selector-box" style="display:none;"></div>
             <div id="episodesSelector" class="selector-box" style="display:none;"></div>
 
             <div class="comments-section">
-                <h5 style="margin-bottom: 8px;"><i class="fas fa-comments"></i> التعليقات</h5>
+                <h5 style="margin-bottom: 8px;"><i class="fas fa-comments"></i> التعليقات والمناقشة</h5>
                 <div style="display:flex; gap:6px;">
-                    <input type="text" id="commentText" placeholder="أضف تعليقك..." style="flex:1; background:#222; border:1px solid #444; color:white; padding:6px; border-radius:4px; font-size:0.8rem;">
+                    <input type="text" id="commentText" placeholder="اكتب تعليقك هنا..." style="flex:1; background:#111; border:1px solid #444; color:white; padding:6px; border-radius:4px; font-size:0.8rem;">
                     <button class="btn-stream btn-admin" style="padding: 6px 12px; font-size: 0.8rem;" onclick="addComment()">إرسال</button>
                 </div>
                 <div id="commentList" style="margin-top:10px;"></div>
@@ -246,7 +262,9 @@
         let allMedia = [];
         let currentFilter = 'الكل';
         let favorites = JSON.parse(localStorage.getItem('cinema_favs') || '[]');
+        let watchlist = JSON.parse(localStorage.getItem('cinema_watchlist') || '[]');
         let activeMediaId = null;
+        let heroMediaId = null;
         let seasonCounter = 0;
 
         window.addEventListener('scroll', () => {
@@ -280,11 +298,17 @@
         }
 
         function setupHero(item) {
+            heroMediaId = item.id;
             document.getElementById('heroBanner').style.backgroundImage = `url('${item.poster}')`;
             document.getElementById('heroTitle').innerText = item.title;
-            document.getElementById('heroOverview').innerText = item.overview || 'أحد أفضل العروض المتوفرة على سينما ستريم.';
+            document.getElementById('heroOverview').innerText = item.overview || 'شاهد هذا العمل الرائع بجودة عالية على سينما ستريم.';
             document.getElementById('heroPlayBtn').onclick = () => openPlayer(item.id);
         }
+
+        window.toggleHeroBookmark = () => {
+            if(!heroMediaId) return;
+            toggleWatchlist(heroMediaId);
+        };
 
         function renderGrid(list) {
             const grid = document.getElementById('mediaGrid');
@@ -292,23 +316,32 @@
 
             let filtered = list;
             if (currentFilter === 'المفضلة') filtered = filtered.filter(i => favorites.includes(i.id));
+            else if (currentFilter === 'المشاهدة لاحقاً') filtered = filtered.filter(i => watchlist.includes(i.id));
             else if (currentFilter !== 'الكل') filtered = filtered.filter(i => i.type === currentFilter);
 
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
             if (searchVal) filtered = filtered.filter(i => i.title.toLowerCase().includes(searchVal));
 
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div style="color:#aaa; font-size:0.85rem; padding:20px 0;">لا توجد أعمال لعرضها حالياً.</div>`;
+                return;
+            }
+
             filtered.forEach(item => {
                 const isFav = favorites.includes(item.id);
+                const isWatch = watchlist.includes(item.id);
                 const card = document.createElement('div');
                 card.className = 'stream-card';
                 card.style.backgroundImage = `url('${item.poster}')`;
                 card.innerHTML = `
+                    <div class="card-tag">${item.type}</div>
                     <div class="card-details">
                         <div class="card-title">${item.title}</div>
-                        <div style="font-size: 0.65rem; color: #46d369;">${item.rating || '8.5'} ★</div>
+                        <div style="font-size: 0.65rem; color: #FFD700;">★ ${item.rating || '8.0'}</div>
                         <div class="card-actions">
                             <button class="action-icon" onclick="openPlayer('${item.id}')"><i class="fas fa-play"></i></button>
-                            <button class="action-icon" onclick="toggleFavorite('${item.id}', event)"><i class="${isFav ? 'fas' : 'far'} fa-heart"></i></button>
+                            <button class="action-icon" onclick="toggleFavorite('${item.id}', event)"><i class="${isFav ? 'fas' : 'far'} fa-heart" style="${isFav ? 'color:red;' : ''}"></i></button>
+                            <button class="action-icon" onclick="toggleWatchlist('${item.id}', event)"><i class="${isWatch ? 'fas' : 'far'} fa-bookmark" style="${isWatch ? 'color:#FFD700;' : ''}"></i></button>
                             ${currentUser ? `<button class="action-icon" onclick="deleteMedia('${item.id}', event)"><i class="fas fa-trash"></i></button>` : ''}
                         </div>
                     </div>
@@ -324,13 +357,36 @@
 
             activeMediaId = id;
             const player = document.getElementById('videoPlayer');
+            const movieServerBox = document.getElementById('movieServerSelector');
             const seasonsBox = document.getElementById('seasonsSelector');
             const epBox = document.getElementById('episodesSelector');
 
+            movieServerBox.style.display = 'none';
+            seasonsBox.style.display = 'none';
+            epBox.style.display = 'none';
+            movieServerBox.innerHTML = '';
             seasonsBox.innerHTML = '';
             epBox.innerHTML = '';
 
-            if (item.type === 'مسلسل' && item.seasons && item.seasons.length > 0) {
+            if (item.type === 'فيلم') {
+                if (item.servers && item.servers.length > 0) {
+                    player.src = item.servers[0].url;
+                    if(item.servers.length > 1) {
+                        movieServerBox.style.display = 'flex';
+                        item.servers.forEach((srv, idx) => {
+                            const btn = document.createElement('button');
+                            btn.className = `select-btn ${idx === 0 ? 'active' : ''}`;
+                            btn.innerText = srv.name || `سيرفر ${idx + 1}`;
+                            btn.onclick = () => {
+                                document.querySelectorAll('#movieServerSelector .select-btn').forEach(b => b.classList.remove('active'));
+                                btn.classList.add('active');
+                                player.src = srv.url;
+                            };
+                            movieServerBox.appendChild(btn);
+                        });
+                    }
+                }
+            } else if (item.type === 'مسلسل' && item.seasons && item.seasons.length > 0) {
                 seasonsBox.style.display = 'flex';
                 epBox.style.display = 'flex';
 
@@ -347,10 +403,6 @@
                 });
 
                 renderEpisodes(item.seasons[0].episodes, player);
-            } else {
-                seasonsBox.style.display = 'none';
-                epBox.style.display = 'none';
-                if(item.servers && item.servers.length > 0) player.src = item.servers[0].url;
             }
 
             loadComments(id);
@@ -387,7 +439,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                     <strong style="font-size:0.85rem;">الموسم ${seasonCounter}</strong>
                     <input type="number" class="ep-count-input" placeholder="عدد الحلقات" min="1" style="width:100px; padding:4px;">
-                    <button type="button" class="btn-stream btn-info" style="padding:2px 6px; font-size:0.75rem;" onclick="generateEpisodesForSeason(${seasonCounter})">توليد</button>
+                    <button type="button" class="btn-stream btn-bookmark" style="padding:2px 6px; font-size:0.75rem;" onclick="generateEpisodesForSeason(${seasonCounter})">توليد</button>
                 </div>
                 <div id="episodes_container_${seasonCounter}"></div>
             `;
@@ -421,7 +473,10 @@
             let servers = [], seasons = [];
 
             if (type === 'فيلم') {
-                servers.push({ name: 'سيرفر 1', url: document.getElementById('movieServer1').value });
+                const s1 = document.getElementById('movieServer1').value;
+                const s2 = document.getElementById('movieServer2').value;
+                if(s1) servers.push({ name: 'سيرفر 1 (رئيسي)', url: s1 });
+                if(s2) servers.push({ name: 'سيرفر 2 (احتياطي)', url: s2 });
             } else {
                 const blocks = document.querySelectorAll('.season-block');
                 blocks.forEach((block, idx) => {
@@ -482,10 +537,18 @@
         };
 
         window.toggleFavorite = (id, e) => {
-            e.stopPropagation();
+            if(e) e.stopPropagation();
             if (favorites.includes(id)) favorites = favorites.filter(i => i !== id);
             else favorites.push(id);
             localStorage.setItem('cinema_favs', JSON.stringify(favorites));
+            renderGrid(allMedia);
+        };
+
+        window.toggleWatchlist = (id, e) => {
+            if(e) e.stopPropagation();
+            if (watchlist.includes(id)) watchlist = watchlist.filter(i => i !== id);
+            else watchlist.push(id);
+            localStorage.setItem('cinema_watchlist', JSON.stringify(watchlist));
             renderGrid(allMedia);
         };
 
@@ -494,18 +557,18 @@
             document.getElementById('videoPlayer').src = '';
         };
 
-        window.filterCategory = (cat) => {
+        window.filterCategory = (cat, event) => {
             currentFilter = cat;
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-            event.target.classList.add('active');
+            if(event) event.target.classList.add('active');
             document.getElementById('rowTitle').innerText = cat === 'الكل' ? 'الأحدث والأكثر مشاهدة' : cat;
             renderGrid(allMedia);
         };
 
         window.handleSearch = () => renderGrid(allMedia);
         window.deleteMedia = async (id, e) => {
-            e.stopPropagation();
-            if(confirm("حذف هذا العمل؟")) await deleteDoc(doc(db, "media", id));
+            if(e) e.stopPropagation();
+            if(confirm("حذف هذا العمل من القائمة؟")) await deleteDoc(doc(db, "media", id));
         };
 
         window.openAuthModal = () => document.getElementById('authModal').style.display = 'flex';
