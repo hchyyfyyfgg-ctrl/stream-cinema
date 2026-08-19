@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>سينما ستريم - CINEMA STREAM</title>
+    <title>SHOWA Box - سينما ستريم</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #101012;
-            --card-bg: #1a1a1e;
+            --bg-main: #0d0d0f;
+            --card-bg: #161619;
             --main-red: #E50914;
             --accent-gold: #FFD700;
             --text-main: #FFFFFF;
             --text-sub: #a0a0a0;
-            --border-color: #2a2a30;
+            --border-color: #26262b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -22,7 +22,7 @@
         /* Header */
         header {
             display: flex; flex-direction: column; gap: 10px;
-            padding: 12px 4%; background: rgba(16, 16, 18, 0.92); backdrop-filter: blur(12px);
+            padding: 12px 4%; background: rgba(13, 13, 15, 0.95); backdrop-filter: blur(12px);
             position: fixed; top: 0; width: 100%; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; }
@@ -41,12 +41,12 @@
 
         /* Hero Featured */
         .hero {
-            position: relative; height: 52vh; min-height: 350px; background-size: cover; background-position: center top;
+            position: relative; height: 50vh; min-height: 340px; background-size: cover; background-position: center top;
             display: flex; align-items: flex-end; padding: 0 4% 25px 4%; margin-top: 85px; border-radius: 0 0 16px 16px; overflow: hidden;
         }
         .hero-overlay {
             position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(16,16,18,0) 0%, rgba(16,16,18,0.7) 60%, var(--bg-main) 100%);
+            background: linear-gradient(180deg, rgba(13,13,15,0) 0%, rgba(13,13,15,0.7) 60%, var(--bg-main) 100%);
         }
         .hero-content { position: relative; z-index: 10; width: 100%; }
         .badge-trend { background: var(--accent-gold); color: #000; font-size: 0.65rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 6px; }
@@ -62,7 +62,7 @@
         .btn-play:active { transform: scale(0.95); }
         .btn-add { background: rgba(255,255,255,0.2); color: #fff; backdrop-filter: blur(8px); }
 
-        /* Content Sections */
+        /* Media Grid */
         .section-container { padding: 20px 4% 0 4%; }
         .section-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; color: #fff; }
 
@@ -92,9 +92,9 @@
             background: #111; border: 1px solid #333; padding: 10px; color: white; border-radius: 6px; outline: none; width: 100%; font-size: 0.85rem;
         }
 
-        /* Video Player Modal */
+        /* Player Modal */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; padding: 10px; }
-        .modal-box { background: var(--card-bg); width: 100%; max-width: 700px; border-radius: 12px; overflow: hidden; position: relative; max-height: 95vh; overflow-y: auto; }
+        .modal-box { background: var(--card-bg); width: 100%; max-width: 750px; border-radius: 12px; overflow: hidden; position: relative; max-height: 95vh; overflow-y: auto; }
         .close-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 1.1rem; }
         
         .player-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
@@ -112,7 +112,7 @@
         @media (min-width: 600px) {
             .media-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
             .card { height: 210px; }
-            .hero { height: 60vh; }
+            .hero { height: 58vh; }
             .hero-title { font-size: 2.3rem; }
         }
     </style>
@@ -122,7 +122,7 @@
     <!-- Header -->
     <header>
         <div class="top-bar">
-            <div class="logo" id="appLogo"><i class="fas fa-play-circle"></i> سينما ستريم</div>
+            <div class="logo" id="appLogo"><i class="fas fa-play-circle"></i> SHOWA Box</div>
             <input type="text" class="search-input" id="searchInput" placeholder="بحث..." oninput="handleSearch()">
         </div>
         <ul class="nav-links">
@@ -142,7 +142,7 @@
             <p class="hero-desc" id="heroOverview">شاهد أفضل وأحدث الأفلام والمسلسلات عالية الجودة مباشرة.</p>
             <div class="hero-btns">
                 <button class="btn-action btn-play" id="heroPlayBtn"><i class="fas fa-play"></i> مشاهدة الآن</button>
-                <button class="btn-action btn-add" id="heroFavBtn" onclick="toggleHeroFav()"><i class="fas fa-heart"></i> للمفضلة</button>
+                <button class="btn-action btn-add" onclick="toggleHeroFav()"><i class="fas fa-heart"></i> للمفضلة</button>
             </div>
         </div>
     </div>
@@ -150,29 +150,28 @@
     <!-- Admin Panel (Hidden) -->
     <section id="adminPanel">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h4 style="color: var(--main-red);"><i class="fas fa-plus-circle"></i> إضافة فيلم أو مسلسل جديد</h4>
+            <h4 style="color: var(--main-red);"><i class="fas fa-plus-circle"></i> إضافة عمل بـ TMDB ID</h4>
             <button class="btn-action btn-add" style="font-size:0.75rem; padding:4px 8px;" onclick="handleLogout()">خروج</button>
         </div>
         <form id="addForm" onsubmit="saveMedia(event)">
             <div class="form-group">
-                <input type="text" id="title" placeholder="عنوان العمل" required>
+                <input type="text" id="title" placeholder="عنوان العمل (مثال: Fight Club)" required>
                 <select id="type" onchange="toggleTypeInputs()">
                     <option value="فيلم">فيلم</option>
                     <option value="مسلسل">مسلسل</option>
                 </select>
-                <input type="number" id="year" placeholder="السنة (مثال 2024)">
-                <input type="number" id="rating" placeholder="التقييم (مثال 8.5)" step="0.1">
+                <input type="text" id="tmdbId" placeholder="TMDB ID (مثال: 550 للأفلام أو 93405 للمسلسلات)" required>
+                <input type="number" id="year" placeholder="السنة (مثال: 2024)">
+                <input type="number" id="rating" placeholder="التقييم (مثال: 8.5)" step="0.1">
                 <input type="url" id="poster" placeholder="رابط صورة البوستر المباشر" required>
             </div>
 
-            <div id="movieInputs" style="margin-top:10px;">
-                <input type="url" id="server1" placeholder="رابط سيرفر التشغيل الرئيسي (Embed)" style="margin-top:4px;">
-                <input type="url" id="server2" placeholder="رابط سيرفر احتياطي (اختياري)" style="margin-top:4px;">
-            </div>
-
-            <div id="seriesInputs" style="display:none; margin-top:10px;">
-                <button type="button" class="btn-action btn-add" style="margin-bottom:8px; font-size:0.75rem;" onclick="addSeasonField()">+ إضافة موسم</button>
-                <div id="seasonsBox"></div>
+            <!-- مدخلات المسلسلات -->
+            <div id="seriesInputs" style="display:none; margin-top:10px; background:#111; padding:10px; border-radius:6px;">
+                <div style="display:flex; gap:8px;">
+                    <input type="number" id="totalSeasons" placeholder="عدد المواسم" value="1" min="1">
+                    <input type="number" id="epsPerSeason" placeholder="عدد الحلقات بالموسم" value="10" min="1">
+                </div>
             </div>
 
             <textarea id="overview" placeholder="قصة العمل..." rows="2" style="margin-top:10px;"></textarea>
@@ -205,7 +204,7 @@
                 <iframe id="videoIframe" allowfullscreen></iframe>
             </div>
 
-            <div id="serverBar" class="selector-bar" style="display:none;"></div>
+            <div id="serverBar" class="selector-bar"></div>
             <div id="seasonBar" class="selector-bar" style="display:none;"></div>
             <div id="epBar" class="selector-bar" style="display:none;"></div>
 
@@ -240,11 +239,10 @@
         let currentUser = null;
         let mediaList = [];
         let currentFilter = 'الكل';
-        let favs = JSON.parse(localStorage.getItem('cinema_favs_v2') || '[]');
+        let favs = JSON.parse(localStorage.getItem('showa_favs') || '[]');
         let currentHeroId = null;
-        let seasonCount = 0;
 
-        // الدخول المخفي للمشرف (ضغطتان على الشعار)
+        // الدخول المخفي (ضغطتان على اللوجو)
         let clickTimer = 0;
         document.getElementById('appLogo').addEventListener('click', () => {
             clickTimer++;
@@ -279,13 +277,11 @@
             currentHeroId = item.id;
             document.getElementById('heroBanner').style.backgroundImage = `url('${item.poster}')`;
             document.getElementById('heroTitle').innerText = item.title;
-            document.getElementById('heroOverview').innerText = item.overview || 'استمتع بالمشاهدة المباشرة بدقة عالية وبدون تقطيع.';
+            document.getElementById('heroOverview').innerText = item.overview || 'شاهد بأعلى جودة وبدون تقطيع.';
             document.getElementById('heroPlayBtn').onclick = () => playMedia(item.id);
         }
 
-        window.toggleHeroFav = () => {
-            if (currentHeroId) toggleFav(currentHeroId);
-        };
+        window.toggleHeroFav = () => { if (currentHeroId) toggleFav(currentHeroId); };
 
         function renderGrid(list) {
             const grid = document.getElementById('mediaGrid');
@@ -299,7 +295,7 @@
             if (q) filtered = filtered.filter(i => i.title.toLowerCase().includes(q));
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div style="color:#888; font-size:0.85rem; grid-column: 1/-1; padding:20px 0;">لا تتوفر أعمال حالياً.</div>`;
+                grid.innerHTML = `<div style="color:#888; font-size:0.85rem; grid-column: 1/-1; padding:20px 0;">لا تتوفر أعمال.</div>`;
                 return;
             }
 
@@ -326,6 +322,7 @@
             });
         }
 
+        // تشغيل الفيديو باستخدام TMDB ID والسيرفرات المزدوجة
         window.playMedia = (id) => {
             const item = mediaList.find(m => m.id === id);
             if (!item) return;
@@ -338,148 +335,124 @@
             const seasonBar = document.getElementById('seasonBar');
             const epBar = document.getElementById('epBar');
 
-            serverBar.style.display = 'none';
+            serverBar.style.display = 'flex';
             seasonBar.style.display = 'none';
             epBar.style.display = 'none';
             serverBar.innerHTML = ''; seasonBar.innerHTML = ''; epBar.innerHTML = '';
 
-            if (item.type === 'فيلم') {
-                if (item.servers && item.servers.length > 0) {
-                    iframe.src = item.servers[0].url;
-                    if (item.servers.length > 1) {
-                        serverBar.style.display = 'flex';
-                        item.servers.forEach((srv, idx) => {
-                            const btn = document.createElement('button');
-                            btn.className = `chip-btn ${idx === 0 ? 'active' : ''}`;
-                            btn.innerText = srv.name || `سيرفر ${idx + 1}`;
-                            btn.onclick = () => {
-                                document.querySelectorAll('#serverBar .chip-btn').forEach(b => b.classList.remove('active'));
-                                btn.classList.add('active');
-                                iframe.src = srv.url;
-                            };
-                            serverBar.appendChild(btn);
-                        });
-                    }
+            let currentServer = '2embed';
+            let currentSeason = 1;
+            let currentEp = 1;
+
+            const updateIframeUrl = () => {
+                if (item.type === 'فيلم') {
+                    iframe.src = currentServer === '2embed' 
+                        ? `https://www.2embed.cc/embed/${item.tmdbId}`
+                        : `https://vidsrc.to/embed/movie/${item.tmdbId}`;
+                } else {
+                    iframe.src = currentServer === '2embed'
+                        ? `https://www.2embed.cc/embedtv/${item.tmdbId}&s=${currentSeason}&e=${currentEp}`
+                        : `https://vidsrc.to/embed/tv/${item.tmdbId}/${currentSeason}/${currentEp}`;
                 }
-            } else if (item.type === 'مسلسل' && item.seasons && item.seasons.length > 0) {
+            };
+
+            // بناء سيرفرات التشغيل
+            const s1Btn = document.createElement('button');
+            s1Btn.className = 'chip-btn active';
+            s1Btn.innerText = 'سيرفر 1 (2Embed)';
+            s1Btn.onclick = () => {
+                document.querySelectorAll('#serverBar .chip-btn').forEach(b => b.classList.remove('active'));
+                s1Btn.classList.add('active');
+                currentServer = '2embed';
+                updateIframeUrl();
+            };
+
+            const s2Btn = document.createElement('button');
+            s2Btn.className = 'chip-btn';
+            s2Btn.innerText = 'سيرفر 2 (VidSrc)';
+            s2Btn.onclick = () => {
+                document.querySelectorAll('#serverBar .chip-btn').forEach(b => b.classList.remove('active'));
+                s2Btn.classList.add('active');
+                currentServer = 'vidsrc';
+                updateIframeUrl();
+            };
+
+            serverBar.appendChild(s1Btn);
+            serverBar.appendChild(s2Btn);
+
+            // التعامل مع المسلسلات والمواسم
+            if (item.type === 'مسلسل') {
                 seasonBar.style.display = 'flex';
                 epBar.style.display = 'flex';
 
-                item.seasons.forEach((s, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = `chip-btn ${idx === 0 ? 'active' : ''}`;
-                    btn.innerText = `الموسم ${s.seasonNumber}`;
-                    btn.onclick = () => {
+                const totalSeasons = item.totalSeasons || 1;
+                const epsPerSeason = item.epsPerSeason || 10;
+
+                for (let s = 1; s <= totalSeasons; s++) {
+                    const sBtn = document.createElement('button');
+                    sBtn.className = `chip-btn ${s === 1 ? 'active' : ''}`;
+                    sBtn.innerText = `الموسم ${s}`;
+                    sBtn.onclick = () => {
                         document.querySelectorAll('#seasonBar .chip-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        renderEpisodes(s.episodes, iframe);
+                        sBtn.classList.add('active');
+                        currentSeason = s;
+                        currentEp = 1;
+                        renderEps(epsPerSeason);
+                        updateIframeUrl();
                     };
-                    seasonBar.appendChild(btn);
-                });
+                    seasonBar.appendChild(sBtn);
+                }
 
-                renderEpisodes(item.seasons[0].episodes, iframe);
-            }
-
-            document.getElementById('playerModal').style.display = 'flex';
-        };
-
-        function renderEpisodes(episodes, iframe) {
-            const epBar = document.getElementById('epBar');
-            epBar.innerHTML = '';
-            if (!episodes || episodes.length === 0) return;
-
-            episodes.forEach((ep, idx) => {
-                const btn = document.createElement('button');
-                btn.className = `chip-btn ${idx === 0 ? 'active' : ''}`;
-                btn.innerText = `حلقة ${ep.number}`;
-                btn.onclick = () => {
-                    document.querySelectorAll('#epBar .chip-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    iframe.src = ep.url;
+                const renderEps = (epCount) => {
+                    epBar.innerHTML = '';
+                    for (let e = 1; e <= epCount; e++) {
+                        const eBtn = document.createElement('button');
+                        eBtn.className = `chip-btn ${e === currentEp ? 'active' : ''}`;
+                        eBtn.innerText = `حلقة ${e}`;
+                        eBtn.onclick = () => {
+                            document.querySelectorAll('#epBar .chip-btn').forEach(b => b.classList.remove('active'));
+                            eBtn.classList.add('active');
+                            currentEp = e;
+                            updateIframeUrl();
+                        };
+                        epBar.appendChild(eBtn);
+                    }
                 };
-                epBar.appendChild(btn);
-            });
 
-            iframe.src = episodes[0].url;
-        }
-
-        window.addSeasonField = () => {
-            seasonCount++;
-            const container = document.getElementById('seasonsBox');
-            const div = document.createElement('div');
-            div.style.background = '#111'; div.style.padding = '8px'; div.style.borderRadius = '6px'; div.style.marginTop = '6px';
-            div.id = `s_box_${seasonCount}`;
-            div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.8rem;">الموسم ${seasonCount}</span>
-                    <input type="number" class="ep-num-input" placeholder="عدد الحلقات" style="width:90px; padding:4px;">
-                    <button type="button" class="btn-action btn-add" style="padding:2px 6px; font-size:0.7rem;" onclick="buildEpInputs(${seasonCount})">توليد</button>
-                </div>
-                <div id="ep_container_${seasonCount}"></div>
-            `;
-            container.appendChild(div);
-        };
-
-        window.buildEpInputs = (sId) => {
-            const box = document.getElementById(`s_box_${sId}`);
-            const count = parseInt(box.querySelector('.ep-num-input').value) || 0;
-            const container = document.getElementById(`ep_container_${sId}`);
-            container.innerHTML = '';
-            for (let i = 1; i <= count; i++) {
-                container.innerHTML += `
-                    <div style="display:flex; gap:6px; margin-top:4px; align-items:center;">
-                        <span style="font-size:0.7rem;">ح${i}:</span>
-                        <input type="url" class="ep-url-field" data-ep="${i}" placeholder="رابط الحلقة" required style="padding:4px;">
-                    </div>
-                `;
+                renderEps(epsPerSeason);
             }
+
+            updateIframeUrl();
+            document.getElementById('playerModal').style.display = 'flex';
         };
 
         window.saveMedia = async (e) => {
             e.preventDefault();
-            if (!currentUser) return alert("قم بتسجيل الدخول أولاً.");
+            if (!currentUser) return alert("سجل دخولك كمشرف أولاً.");
 
             const type = document.getElementById('type').value;
-            let servers = [], seasons = [];
-
-            if (type === 'فيلم') {
-                const s1 = document.getElementById('server1').value;
-                const s2 = document.getElementById('server2').value;
-                if (s1) servers.push({ name: 'سيرفر رئيسي', url: s1 });
-                if (s2) servers.push({ name: 'سيرفر احتياطي', url: s2 });
-            } else {
-                const sBoxes = document.querySelectorAll('#seasonsBox > div');
-                sBoxes.forEach((b, idx) => {
-                    const fields = b.querySelectorAll('.ep-url-field');
-                    let episodes = [];
-                    fields.forEach(f => {
-                        if (f.value.trim()) episodes.push({ number: f.getAttribute('data-ep'), url: f.value.trim() });
-                    });
-                    if (episodes.length > 0) seasons.push({ seasonNumber: idx + 1, episodes });
-                });
-            }
 
             await addDoc(collection(db, "media"), {
                 title: document.getElementById('title').value,
                 type,
+                tmdbId: document.getElementById('tmdbId').value.trim(),
                 year: document.getElementById('year').value || '2024',
                 rating: document.getElementById('rating').value || '8.0',
-                poster: document.getElementById('poster').value,
+                poster: document.getElementById('poster').value.trim(),
                 overview: document.getElementById('overview').value,
-                servers, seasons
+                totalSeasons: type === 'مسلسل' ? parseInt(document.getElementById('totalSeasons').value) : 1,
+                epsPerSeason: type === 'مسلسل' ? parseInt(document.getElementById('epsPerSeason').value) : 1
             });
 
             document.getElementById('addForm').reset();
-            document.getElementById('seasonsBox').innerHTML = '';
-            seasonCount = 0;
-            alert("تم نشر العمل بنجاح في التطبيق!");
+            alert("تم إدراج العمل في القائمة بنجاح!");
         };
 
         window.loginAdmin = async () => {
             try {
                 await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
                 closeModal('authModal');
-            } catch(e) { alert("بيانات الدخول خاطئة!"); }
+            } catch(e) { alert("بيانات الدخول غير صحيحة!"); }
         };
 
         window.handleLogout = () => signOut(auth);
@@ -488,7 +461,7 @@
             if (e) e.stopPropagation();
             if (favs.includes(id)) favs = favs.filter(i => i !== id);
             else favs.push(id);
-            localStorage.setItem('cinema_favs_v2', JSON.stringify(favs));
+            localStorage.setItem('showa_favs', JSON.stringify(favs));
             renderGrid(mediaList);
         };
 
@@ -513,7 +486,6 @@
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
         window.toggleTypeInputs = () => {
             const t = document.getElementById('type').value;
-            document.getElementById('movieInputs').style.display = t === 'فيلم' ? 'block' : 'none';
             document.getElementById('seriesInputs').style.display = t === 'مسلسل' ? 'block' : 'none';
         };
     </script>
