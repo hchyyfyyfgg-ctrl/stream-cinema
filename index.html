@@ -82,22 +82,12 @@
         .card-title { font-size: 0.75rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; color: var(--accent-gold); margin-top: 2px; }
 
-        /* Admin Controls */
-        #adminPanel {
-            background: var(--card-bg); margin: 90px 4% 10px 4%; padding: 16px;
-            border-radius: 10px; border: 1px solid var(--main-red); display: none;
-        }
-        .form-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .form-group input, .form-group select, textarea {
-            background: #111; border: 1px solid #333; padding: 10px; color: white; border-radius: 6px; outline: none; width: 100%; font-size: 0.85rem;
-        }
-
-        /* Info Modal (Details Only) */
+        /* Info Modal */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal-box { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 12px; overflow: hidden; position: relative; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); }
         .close-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 1.1rem; }
         
-        .detail-poster { width: 100%; height: 260px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
+        .detail-poster { width: 100%; height: 280px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
         .media-details-box { padding: 16px; }
         .media-details-box h3 { font-size: 1.3rem; margin-bottom: 8px; color: #fff; }
         .detail-tags { display: flex; gap: 8px; font-size: 0.75rem; color: var(--accent-gold); margin-bottom: 12px; }
@@ -117,7 +107,7 @@
     <!-- Header -->
     <header>
         <div class="top-bar">
-            <div class="logo" id="appLogo"><i class="fas fa-film"></i> سينما ستريم</div>
+            <div class="logo"><i class="fas fa-film"></i> سينما ستريم</div>
             <input type="text" class="search-input" id="searchInput" placeholder="بحث..." oninput="handleSearch()">
         </div>
         <ul class="nav-links">
@@ -133,8 +123,8 @@
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <span class="badge-trend"><i class="fas fa-fire"></i> العمل المتميز</span>
-            <h1 class="hero-title" id="heroTitle">جاري التحميل...</h1>
-            <p class="hero-desc" id="heroOverview">دليلك الكامل لمعرفة تفاصيل ومعلومات أحدث الأفلام والمسلسلات.</p>
+            <h1 class="hero-title" id="heroTitle">-</h1>
+            <p class="hero-desc" id="heroOverview">-</p>
             <div class="hero-btns">
                 <button class="btn-action btn-play" id="heroDetailsBtn"><i class="fas fa-info-circle"></i> عرض التفاصيل</button>
                 <button class="btn-action btn-add" onclick="toggleHeroFav()"><i class="fas fa-heart"></i> للمفضلة</button>
@@ -142,48 +132,10 @@
         </div>
     </div>
 
-    <!-- Admin Panel (Hidden) -->
-    <section id="adminPanel">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h4 style="color: var(--main-red);"><i class="fas fa-plus-circle"></i> إضافة عمل جديد</h4>
-            <button class="btn-action btn-add" style="font-size:0.75rem; padding:4px 8px;" onclick="handleLogout()">خروج</button>
-        </div>
-        <form id="addForm" onsubmit="saveMedia(event)">
-            <div class="form-group">
-                <input type="text" id="title" placeholder="عنوان العمل (مثال: Interstellar)" required>
-                <select id="type" onchange="toggleTypeInputs()">
-                    <option value="فيلم">فيلم</option>
-                    <option value="مسلسل">مسلسل</option>
-                </select>
-                <input type="number" id="year" placeholder="سنة الإنتاج (مثال: 2024)">
-                <input type="number" id="rating" placeholder="التقييم (مثال: 8.6)" step="0.1">
-                <input type="url" id="poster" placeholder="رابط صورة البوستر المباشر" required>
-            </div>
-
-            <div id="seriesInputs" style="display:none; margin-top:10px; background:#111; padding:10px; border-radius:6px;">
-                <input type="number" id="totalSeasons" placeholder="عدد المواسم" value="1" min="1">
-            </div>
-
-            <textarea id="overview" placeholder="قصة العمل وتفاصيله..." rows="3" style="margin-top:10px;" required></textarea>
-            <button type="submit" class="btn-action btn-play" style="margin-top:10px; width:100%; justify-content:center; background:var(--main-red); color:white;">حفظ في سينما ستريم</button>
-        </form>
-    </section>
-
     <!-- Media Grid -->
     <div class="section-container">
         <div class="section-title" id="gridTitle">الأحدث والمضاف مؤخراً</div>
         <div class="media-grid" id="mediaGrid"></div>
-    </div>
-
-    <!-- Auth Modal -->
-    <div class="modal" id="authModal">
-        <div class="modal-box" style="max-width: 300px; padding: 20px;">
-            <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
-            <h4 style="margin-bottom: 12px; text-align:center; color: var(--main-red);">تسجيل دخول المشرف</h4>
-            <input type="email" id="email" placeholder="البريد الإلكتروني" style="width:100%; padding:8px; margin-bottom:8px; background:#111; border:1px solid #444; color:white; border-radius:4px; font-size:0.8rem;">
-            <input type="password" id="password" placeholder="كلمة المرور" style="width:100%; padding:8px; margin-bottom:12px; background:#111; border:1px solid #444; color:white; border-radius:4px; font-size:0.8rem;">
-            <button class="btn-action btn-play" style="width:100%; justify-content:center; background:var(--main-red); color:white;" onclick="loginAdmin()">دخول</button>
-        </div>
     </div>
 
     <!-- Details Card Modal -->
@@ -204,63 +156,97 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <script>
+        // قائمة الأفلام والمسلسلات الجاهزة
+        const staticMediaList = [
+            {
+                id: "1",
+                title: "All of Us Are Dead",
+                type: "مسلسل",
+                year: "2022",
+                rating: "7.5",
+                totalSeasons: 1,
+                poster: "https://image.tmdb.org/t/p/w500/8P12L39912Cde02d131.jpg",
+                overview: "تتحول مدرسة ثانوية إلى نقطة انطلاق لتفشي تفشي فيروس الزومبي. يجب على الطلاب المحاصرين القتال من أجل الخروج أو التحول إلى مصابين."
+            },
+            {
+                id: "2",
+                title: "The Walking Dead",
+                type: "مسلسل",
+                year: "2010",
+                rating: "8.1",
+                totalSeasons: 11,
+                poster: "https://image.tmdb.org/t/p/w500/xf9wuDcqlUP9AObEgAptA1P2S9w.jpg",
+                overview: "يقود ضابط الشرطة ريك غرايمز مجموعة من الناجين في عالم يحكمه الزومبي بحثًا عن الأمان ومأوى للعيش فيه."
+            },
+            {
+                id: "3",
+                title: "Sweet Home",
+                type: "مسلسل",
+                year: "2020",
+                rating: "7.3",
+                totalSeasons: 3,
+                poster: "https://image.tmdb.org/t/p/w500/v3ne31411k2841k21.jpg",
+                overview: "بينما يتحول البشر إلى وحوش شريرة وينشرون الرعب، يقاتل مراهق معذب وجيرانه في المجمع السكني للتمسك بانسانيتهم والبقاء."
+            },
+            {
+                id: "4",
+                title: "Moving",
+                type: "مسلسل",
+                year: "2023",
+                rating: "8.5",
+                totalSeasons: 1,
+                poster: "https://image.tmdb.org/t/p/w500/414151412.jpg",
+                overview: "مراهقون يمتلكون قدرات خارقة مخفية وأولياء أمورهم يحاولون حمايتهم من الاستغلال والتهديدات الخارجية."
+            },
+            {
+                id: "5",
+                title: "Interstellar",
+                type: "فيلم",
+                year: "2014",
+                rating: "8.7",
+                poster: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6Mxl4vR31.jpg",
+                overview: "فريق من المستكشفين يسافر عبر ثقب دودي في الفضاء في محاولة لضمان بقاء البشرية على قيد الحياة بعد تدهور كوكب الأرض."
+            },
+            {
+                id: "6",
+                title: "The Ones Who Live",
+                type: "مسلسل",
+                year: "2024",
+                rating: "8.0",
+                totalSeasons: 1,
+                poster: "https://image.tmdb.org/t/p/w500/31414151.jpg",
+                overview: "قصة حب ملحمية بين ريك غرايمز وميشون في عالم تغيرت فيه كل قواعد العالم القديم بسبب تفشي الموتى السائرين."
+            },
+            {
+                id: "7",
+                title: "Weak Hero Class 1",
+                type: "مسلسل",
+                year: "2022",
+                rating: "8.6",
+                totalSeasons: 1,
+                poster: "https://image.tmdb.org/t/p/w500/3151512.jpg",
+                overview: "طالب نموذج يبدو ضعيفاً في الظاهر، ولكنه يستخدم الذكاء وعلم النفس لمواجهة العنف والمضايقات داخل وخارج المدرسة."
+            },
+            {
+                id: "8",
+                title: "Inception",
+                type: "فيلم",
+                year: "2010",
+                rating: "8.8",
+                poster: "https://image.tmdb.org/t/p/w500/ljs2A1D3A9B23k094.jpg",
+                overview: "لص محترف يستخرج أسرار الشركات من خلال استخدام تكنولوجيا مشاركة الأحلام، يُمنح فرصة لاستعادة حياته مقابل زرع فكرة داخل عقل أحدهم."
+            }
+        ];
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyALvUGKfiOLGjbnpldZ9IQfCR9sVMHU4WY",
-            authDomain: "showa-4ea31.firebaseapp.com",
-            databaseURL: "https://showa-4ea31-default-rtdb.firebaseio.com",
-            projectId: "showa-4ea31",
-            storageBucket: "showa-4ea31.firebasestorage.app",
-            messagingSenderId: "161674174849",
-            appId: "1:161674174849:web:2165916f33fe592db60880"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        enableIndexedDbPersistence(db).catch(() => {});
-
-        let currentUser = null;
-        let mediaList = [];
         let currentFilter = 'الكل';
         let favs = JSON.parse(localStorage.getItem('cinemastream_favs') || '[]');
         let currentHeroId = null;
 
-        // الدخول المخفي للمشرف (ضغطتان على اللوجو)
-        let clickTimer = 0;
-        document.getElementById('appLogo').addEventListener('click', () => {
-            clickTimer++;
-            if (clickTimer === 2) {
-                clickTimer = 0;
-                if (currentUser) {
-                    document.getElementById('adminPanel').style.display = 'block';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    document.getElementById('authModal').style.display = 'flex';
-                }
-            }
-            setTimeout(() => { clickTimer = 0; }, 500);
+        document.addEventListener('DOMContentLoaded', () => {
+            if (staticMediaList.length > 0) renderHero(staticMediaList[0]);
+            renderGrid(staticMediaList);
         });
-
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            document.getElementById('adminPanel').style.display = user ? 'block' : 'none';
-            fetchData();
-        });
-
-        function fetchData() {
-            onSnapshot(collection(db, "media"), (snap) => {
-                mediaList = [];
-                snap.forEach(d => mediaList.push({ id: d.id, ...d.data() }));
-                if (mediaList.length > 0) renderHero(mediaList[0]);
-                renderGrid(mediaList);
-            });
-        }
 
         function renderHero(item) {
             currentHeroId = item.id;
@@ -284,7 +270,7 @@
             if (q) filtered = filtered.filter(i => i.title.toLowerCase().includes(q));
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div style="color:#888; font-size:0.85rem; grid-column: 1/-1; padding:20px 0;">لا تتوفر أعمال.</div>`;
+                grid.innerHTML = `<div style="color:#888; font-size:0.85rem; grid-column: 1/-1; padding:20px 0;">لا تتوفر أعمال matching.</div>`;
                 return;
             }
 
@@ -299,10 +285,7 @@
                         <div class="card-title">${item.title}</div>
                         <div class="card-meta">
                             <span>★ ${item.rating || '8.0'}</span>
-                            <div>
-                                <i class="${isFav ? 'fas' : 'far'} fa-heart" onclick="toggleFav('${item.id}', event)" style="${isFav ? 'color:red;' : ''}"></i>
-                                ${currentUser ? `<i class="fas fa-trash" style="margin-right:8px; color:#ff4444;" onclick="deleteItem('${item.id}', event)"></i>` : ''}
-                            </div>
+                            <i class="${isFav ? 'fas' : 'far'} fa-heart" onclick="toggleFav('${item.id}', event)" style="${isFav ? 'color:red;' : ''}"></i>
                         </div>
                     </div>
                 `;
@@ -311,9 +294,8 @@
             });
         }
 
-        // عرض تفاصيل العمل في نافذة
         window.showDetails = (id) => {
-            const item = mediaList.find(m => m.id === id);
+            const item = staticMediaList.find(m => m.id === id);
             if (!item) return;
 
             document.getElementById('detailPoster').src = item.poster;
@@ -334,41 +316,12 @@
             document.getElementById('detailsModal').style.display = 'flex';
         };
 
-        window.saveMedia = async (e) => {
-            e.preventDefault();
-            if (!currentUser) return alert("سجل دخولك كمشرف أولاً.");
-
-            const type = document.getElementById('type').value;
-
-            await addDoc(collection(db, "media"), {
-                title: document.getElementById('title').value,
-                type,
-                year: document.getElementById('year').value || '2024',
-                rating: document.getElementById('rating').value || '8.0',
-                poster: document.getElementById('poster').value.trim(),
-                overview: document.getElementById('overview').value,
-                totalSeasons: type === 'مسلسل' ? parseInt(document.getElementById('totalSeasons').value) : 1
-            });
-
-            document.getElementById('addForm').reset();
-            alert("تم حفظ معلومات العمل بنجاح!");
-        };
-
-        window.loginAdmin = async () => {
-            try {
-                await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
-                closeModal('authModal');
-            } catch(e) { alert("بيانات الدخول غير صحيحة!"); }
-        };
-
-        window.handleLogout = () => signOut(auth);
-
         window.toggleFav = (id, e) => {
             if (e) e.stopPropagation();
             if (favs.includes(id)) favs = favs.filter(i => i !== id);
             else favs.push(id);
             localStorage.setItem('cinemastream_favs', JSON.stringify(favs));
-            renderGrid(mediaList);
+            renderGrid(staticMediaList);
         };
 
         window.filterCategory = (cat, e) => {
@@ -376,19 +329,11 @@
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
             if (e) e.target.classList.add('active');
             document.getElementById('gridTitle').innerText = cat === 'الكل' ? 'الأحدث والمضاف مؤخراً' : cat;
-            renderGrid(mediaList);
+            renderGrid(staticMediaList);
         };
 
-        window.handleSearch = () => renderGrid(mediaList);
-        window.deleteItem = async (id, e) => {
-            if (e) e.stopPropagation();
-            if (confirm("هل تريد حذف هذا العمل؟")) await deleteDoc(doc(db, "media", id));
-        };
+        window.handleSearch = () => renderGrid(staticMediaList);
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
-        window.toggleTypeInputs = () => {
-            const t = document.getElementById('type').value;
-            document.getElementById('seriesInputs').style.display = t === 'مسلسل' ? 'block' : 'none';
-        };
     </script>
 </body>
 </html>
