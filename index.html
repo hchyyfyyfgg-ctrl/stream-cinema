@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>سينما ستريم - دليل الأفلام والمسلسلات</title>
+    <title>سينما ستريم - دليل ومشاهدة الأفلام والمسلسلات</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -39,10 +39,9 @@
         .nav-links a { color: var(--text-sub); text-decoration: none; font-size: 0.82rem; cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: 0.2s; }
         .nav-links a.active { color: #fff; font-weight: bold; background: var(--main-red); }
 
-        /* Filter Bars Container */
+        /* Filters Bar Container */
         .filters-container { margin-top: 125px; padding: 0 4%; display: flex; flex-direction: column; gap: 8px; }
 
-        /* Regions / Languages Bar */
         .bar-scroll { display: flex; gap: 8px; overflow-x: auto; white-space: nowrap; padding-bottom: 4px; }
         .bar-scroll::-webkit-scrollbar { display: none; }
         
@@ -73,7 +72,7 @@
             padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;
             border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;
         }
-        .btn-play { background: #fff; color: #000; }
+        .btn-play { background: var(--main-red); color: #fff; }
         .btn-play:active { transform: scale(0.95); }
         .btn-add { background: rgba(255,255,255,0.2); color: #fff; backdrop-filter: blur(8px); }
 
@@ -100,9 +99,9 @@
 
         .loader { text-align: center; padding: 20px; color: var(--text-sub); font-size: 0.9rem; display: none; }
 
-        /* Modal */
+        /* Modal & Player */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
-        .modal-box { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 12px; overflow: hidden; position: relative; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); }
+        .modal-box { background: var(--card-bg); width: 100%; max-width: 650px; border-radius: 12px; overflow: hidden; position: relative; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); }
         .close-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 1.1rem; }
         
         .detail-poster { width: 100%; height: 280px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
@@ -110,13 +109,24 @@
         .media-details-box h3 { font-size: 1.3rem; margin-bottom: 8px; color: #fff; }
         .detail-tags { display: flex; gap: 8px; font-size: 0.75rem; color: var(--accent-gold); margin-bottom: 12px; }
         .detail-tag { background: #222; padding: 2px 8px; border-radius: 4px; border: 1px solid #333; }
-        .media-details-box p { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+        .media-details-box p { font-size: 0.85rem; color: #ccc; line-height: 1.6; margin-bottom: 16px; }
+
+        .player-container { width: 100%; height: 320px; background: #000; display: none; border-bottom: 1px solid var(--border-color); }
+        .player-container iframe { width: 100%; height: 100%; border: none; }
+
+        .watch-btn {
+            background: var(--main-red); color: white; width: 100%; padding: 12px; border: none;
+            border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s;
+        }
+        .watch-btn:hover { background: #cc0812; }
 
         @media (min-width: 600px) {
             .media-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
             .card { height: 210px; }
             .hero { height: 48vh; }
             .hero-title { font-size: 2.1rem; }
+            .player-container { height: 380px; }
         }
     </style>
 </head>
@@ -168,9 +178,9 @@
         <div class="hero-content">
             <span class="badge-trend"><i class="fas fa-fire"></i> العمل المتميز</span>
             <h1 class="hero-title" id="heroTitle">جاري التحميل...</h1>
-            <p class="hero-desc" id="heroOverview">دليلك الكامل لمعرفة تفاصيل ومعلومات أحدث الأفلام والمسلسلات.</p>
+            <p class="hero-desc" id="heroOverview">دليلك الكامل لمعرفة تفاصيل ومواشهدة أحدث الأفلام والمسلسلات.</p>
             <div class="hero-btns">
-                <button class="btn-action btn-play" id="heroDetailsBtn"><i class="fas fa-info-circle"></i> عرض التفاصيل</button>
+                <button class="btn-action btn-play" id="heroDetailsBtn"><i class="fas fa-play"></i> مشاهدة الآن</button>
                 <button class="btn-action btn-add" onclick="toggleHeroFav()"><i class="fas fa-heart"></i> للمفضلة</button>
             </div>
         </div>
@@ -183,11 +193,17 @@
         <div class="loader" id="loader"><i class="fas fa-spinner fa-spin"></i> جاري تحميل المزيد...</div>
     </div>
 
-    <!-- Details Card Modal -->
+    <!-- Details & Video Player Modal -->
     <div class="modal" id="detailsModal">
         <div class="modal-box">
             <button class="close-btn" onclick="closeModal('detailsModal')">&times;</button>
+            
+            <div class="player-container" id="playerContainer">
+                <iframe id="videoIframe" src="" allowfullscreen></iframe>
+            </div>
+
             <img id="detailPoster" class="detail-poster" src="" alt="Poster">
+            
             <div class="media-details-box">
                 <h3 id="detailTitle">-</h3>
                 <div class="detail-tags">
@@ -196,12 +212,13 @@
                     <span class="detail-tag" id="detailYear">-</span>
                 </div>
                 <p id="detailOverview">-</p>
+                <button class="watch-btn" id="startWatchBtn" onclick="playMedia()"><i class="fas fa-play-circle"></i> مشاهدة الآن</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API_KEY = "c90649169b66b322c8256426f78b20b5";
+        const API_KEY = "3fd2be6f0cd0561139e103d815d9b40a";
         const BASE_URL = "https://api.themoviedb.org/3";
         const IMAGE_PATH = "https://image.tmdb.org/t/p/w500";
 
@@ -211,6 +228,7 @@
         let currentGenre = null;
         let currentPage = 1;
         let isLoading = false;
+        let activeMedia = null;
         let favs = JSON.parse(localStorage.getItem('cinemastream_favs') || '[]');
         let currentHeroItem = null;
 
@@ -273,6 +291,7 @@
                 id: item.id.toString(),
                 title: item.title || item.name,
                 type: item.title ? 'فيلم' : 'مسلسل',
+                rawType: item.title ? 'movie' : 'tv',
                 year: (item.release_date || item.first_air_date || '2024').split('-')[0],
                 rating: item.vote_average ? item.vote_average.toFixed(1) : '8.0',
                 poster: item.poster_path ? `${IMAGE_PATH}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster',
@@ -386,6 +405,11 @@
             const item = loadedMedia.find(m => m.id === id);
             if (!item) return;
 
+            activeMedia = item;
+            document.getElementById('playerContainer').style.display = 'none';
+            document.getElementById('videoIframe').src = '';
+            document.getElementById('detailPoster').style.display = 'block';
+
             document.getElementById('detailPoster').src = item.poster;
             document.getElementById('detailTitle').innerText = item.title;
             document.getElementById('detailType').innerText = item.type;
@@ -396,6 +420,22 @@
             document.getElementById('detailsModal').style.display = 'flex';
         };
 
+        // وظيفة التشغيل الحقيقي
+        window.playMedia = () => {
+            if (!activeMedia) return;
+
+            let streamUrl = '';
+            if (activeMedia.rawType === 'movie') {
+                streamUrl = `https://vidsrc.to/embed/movie/${activeMedia.id}`;
+            } else {
+                streamUrl = `https://vidsrc.to/embed/tv/${activeMedia.id}/1/1`;
+            }
+
+            document.getElementById('detailPoster').style.display = 'none';
+            document.getElementById('playerContainer').style.display = 'block';
+            document.getElementById('videoIframe').src = streamUrl;
+        };
+
         window.toggleFav = (id, e) => {
             if (e) e.stopPropagation();
             if (favs.includes(id)) favs = favs.filter(i => i !== id);
@@ -404,7 +444,10 @@
             renderGrid(loadedMedia);
         };
 
-        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+        window.closeModal = (id) => {
+            document.getElementById('videoIframe').src = '';
+            document.getElementById(id).style.display = 'none';
+        };
     </script>
 </body>
 </html>
