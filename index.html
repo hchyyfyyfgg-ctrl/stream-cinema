@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>سينما ستريم - Cinema Stream</title>
+    <title>سينما ستريم - دليل الأفلام والمسلسلات</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -92,22 +92,17 @@
             background: #111; border: 1px solid #333; padding: 10px; color: white; border-radius: 6px; outline: none; width: 100%; font-size: 0.85rem;
         }
 
-        /* Player Modal */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; padding: 10px; }
-        .modal-box { background: var(--card-bg); width: 100%; max-width: 750px; border-radius: 12px; overflow: hidden; position: relative; max-height: 95vh; overflow-y: auto; }
+        /* Info Modal (Details Only) */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
+        .modal-box { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 12px; overflow: hidden; position: relative; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); }
         .close-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 1.1rem; }
         
-        .player-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
-        .player-wrapper iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-
-        .selector-bar { display: flex; overflow-x: auto; gap: 8px; padding: 10px 12px; background: #111; border-bottom: 1px solid #222; }
-        .selector-bar::-webkit-scrollbar { display: none; }
-        .chip-btn { flex: 0 0 auto; background: #222; border: 1px solid #444; color: white; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; }
-        .chip-btn.active { background: var(--main-red); border-color: var(--main-red); font-weight: bold; }
-
-        .media-details-box { padding: 14px; }
-        .media-details-box h3 { font-size: 1.1rem; margin-bottom: 6px; }
-        .media-details-box p { font-size: 0.8rem; color: #aaa; line-height: 1.4; }
+        .detail-poster { width: 100%; height: 260px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
+        .media-details-box { padding: 16px; }
+        .media-details-box h3 { font-size: 1.3rem; margin-bottom: 8px; color: #fff; }
+        .detail-tags { display: flex; gap: 8px; font-size: 0.75rem; color: var(--accent-gold); margin-bottom: 12px; }
+        .detail-tag { background: #222; padding: 2px 8px; border-radius: 4px; border: 1px solid #333; }
+        .media-details-box p { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
 
         @media (min-width: 600px) {
             .media-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
@@ -122,7 +117,7 @@
     <!-- Header -->
     <header>
         <div class="top-bar">
-            <div class="logo" id="appLogo"><i class="fas fa-play-circle"></i> سينما ستريم</div>
+            <div class="logo" id="appLogo"><i class="fas fa-film"></i> سينما ستريم</div>
             <input type="text" class="search-input" id="searchInput" placeholder="بحث..." oninput="handleSearch()">
         </div>
         <ul class="nav-links">
@@ -137,11 +132,11 @@
     <div class="hero" id="heroBanner">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <span class="badge-trend"><i class="fas fa-fire"></i> الأبرز حالياً</span>
+            <span class="badge-trend"><i class="fas fa-fire"></i> العمل المتميز</span>
             <h1 class="hero-title" id="heroTitle">جاري التحميل...</h1>
-            <p class="hero-desc" id="heroOverview">شاهد أفضل وأحدث الأفلام والمسلسلات عالية الجودة مباشرة عبر سينما ستريم.</p>
+            <p class="hero-desc" id="heroOverview">دليلك الكامل لمعرفة تفاصيل ومعلومات أحدث الأفلام والمسلسلات.</p>
             <div class="hero-btns">
-                <button class="btn-action btn-play" id="heroPlayBtn"><i class="fas fa-play"></i> مشاهدة الآن</button>
+                <button class="btn-action btn-play" id="heroDetailsBtn"><i class="fas fa-info-circle"></i> عرض التفاصيل</button>
                 <button class="btn-action btn-add" onclick="toggleHeroFav()"><i class="fas fa-heart"></i> للمفضلة</button>
             </div>
         </div>
@@ -150,32 +145,27 @@
     <!-- Admin Panel (Hidden) -->
     <section id="adminPanel">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h4 style="color: var(--main-red);"><i class="fas fa-plus-circle"></i> إضافة عمل بـ TMDB ID</h4>
+            <h4 style="color: var(--main-red);"><i class="fas fa-plus-circle"></i> إضافة عمل جديد</h4>
             <button class="btn-action btn-add" style="font-size:0.75rem; padding:4px 8px;" onclick="handleLogout()">خروج</button>
         </div>
         <form id="addForm" onsubmit="saveMedia(event)">
             <div class="form-group">
-                <input type="text" id="title" placeholder="عنوان العمل (مثال: Fight Club)" required>
+                <input type="text" id="title" placeholder="عنوان العمل (مثال: Interstellar)" required>
                 <select id="type" onchange="toggleTypeInputs()">
                     <option value="فيلم">فيلم</option>
                     <option value="مسلسل">مسلسل</option>
                 </select>
-                <input type="text" id="tmdbId" placeholder="TMDB ID (مثال: 550 للأفلام أو 93405 للمسلسلات)" required>
-                <input type="number" id="year" placeholder="السنة (مثال: 2024)">
-                <input type="number" id="rating" placeholder="التقييم (مثال: 8.5)" step="0.1">
+                <input type="number" id="year" placeholder="سنة الإنتاج (مثال: 2024)">
+                <input type="number" id="rating" placeholder="التقييم (مثال: 8.6)" step="0.1">
                 <input type="url" id="poster" placeholder="رابط صورة البوستر المباشر" required>
             </div>
 
-            <!-- مدخلات المسلسلات -->
             <div id="seriesInputs" style="display:none; margin-top:10px; background:#111; padding:10px; border-radius:6px;">
-                <div style="display:flex; gap:8px;">
-                    <input type="number" id="totalSeasons" placeholder="عدد المواسم" value="1" min="1">
-                    <input type="number" id="epsPerSeason" placeholder="عدد الحلقات بالموسم" value="10" min="1">
-                </div>
+                <input type="number" id="totalSeasons" placeholder="عدد المواسم" value="1" min="1">
             </div>
 
-            <textarea id="overview" placeholder="قصة العمل..." rows="2" style="margin-top:10px;"></textarea>
-            <button type="submit" class="btn-action btn-play" style="margin-top:10px; width:100%; justify-content:center; background:var(--main-red); color:white;">نشر العمل في سينما ستريم</button>
+            <textarea id="overview" placeholder="قصة العمل وتفاصيله..." rows="3" style="margin-top:10px;" required></textarea>
+            <button type="submit" class="btn-action btn-play" style="margin-top:10px; width:100%; justify-content:center; background:var(--main-red); color:white;">حفظ في سينما ستريم</button>
         </form>
     </section>
 
@@ -196,21 +186,20 @@
         </div>
     </div>
 
-    <!-- Player Modal -->
-    <div class="modal" id="playerModal">
+    <!-- Details Card Modal -->
+    <div class="modal" id="detailsModal">
         <div class="modal-box">
-            <button class="close-btn" onclick="closePlayer()">&times;</button>
-            <div class="player-wrapper">
-                <iframe id="videoIframe" allowfullscreen></iframe>
-            </div>
-
-            <div id="serverBar" class="selector-bar"></div>
-            <div id="seasonBar" class="selector-bar" style="display:none;"></div>
-            <div id="epBar" class="selector-bar" style="display:none;"></div>
-
+            <button class="close-btn" onclick="closeModal('detailsModal')">&times;</button>
+            <img id="detailPoster" class="detail-poster" src="" alt="Poster">
             <div class="media-details-box">
-                <h3 id="playTitle">-</h3>
-                <p id="playOverview">-</p>
+                <h3 id="detailTitle">-</h3>
+                <div class="detail-tags">
+                    <span class="detail-tag" id="detailType">-</span>
+                    <span class="detail-tag" id="detailRating">★ -</span>
+                    <span class="detail-tag" id="detailYear">-</span>
+                    <span class="detail-tag" id="detailSeasons" style="display:none;">-</span>
+                </div>
+                <p id="detailOverview">-</p>
             </div>
         </div>
     </div>
@@ -242,7 +231,7 @@
         let favs = JSON.parse(localStorage.getItem('cinemastream_favs') || '[]');
         let currentHeroId = null;
 
-        // الدخول المخفي (ضغطتان متتاليتان على اللوجو)
+        // الدخول المخفي للمشرف (ضغطتان على اللوجو)
         let clickTimer = 0;
         document.getElementById('appLogo').addEventListener('click', () => {
             clickTimer++;
@@ -277,8 +266,8 @@
             currentHeroId = item.id;
             document.getElementById('heroBanner').style.backgroundImage = `url('${item.poster}')`;
             document.getElementById('heroTitle').innerText = item.title;
-            document.getElementById('heroOverview').innerText = item.overview || 'شاهد بأعلى جودة وبدون تقطيع.';
-            document.getElementById('heroPlayBtn').onclick = () => playMedia(item.id);
+            document.getElementById('heroOverview').innerText = item.overview || 'استكشف معلومات وقصة العمل.';
+            document.getElementById('heroDetailsBtn').onclick = () => showDetails(item.id);
         }
 
         window.toggleHeroFav = () => { if (currentHeroId) toggleFav(currentHeroId); };
@@ -317,110 +306,32 @@
                         </div>
                     </div>
                 `;
-                card.onclick = (e) => { if (e.target.tagName !== 'I') playMedia(item.id); };
+                card.onclick = (e) => { if (e.target.tagName !== 'I') showDetails(item.id); };
                 grid.appendChild(card);
             });
         }
 
-        window.playMedia = (id) => {
+        // عرض تفاصيل العمل في نافذة
+        window.showDetails = (id) => {
             const item = mediaList.find(m => m.id === id);
             if (!item) return;
 
-            document.getElementById('playTitle').innerText = item.title;
-            document.getElementById('playOverview').innerText = item.overview || '';
+            document.getElementById('detailPoster').src = item.poster;
+            document.getElementById('detailTitle').innerText = item.title;
+            document.getElementById('detailType').innerText = item.type;
+            document.getElementById('detailRating').innerText = `★ ${item.rating || '8.0'}`;
+            document.getElementById('detailYear').innerText = item.year || '2024';
+            document.getElementById('detailOverview').innerText = item.overview || 'لا تتوفر قصة حالياً.';
 
-            const iframe = document.getElementById('videoIframe');
-            const serverBar = document.getElementById('serverBar');
-            const seasonBar = document.getElementById('seasonBar');
-            const epBar = document.getElementById('epBar');
-
-            serverBar.style.display = 'flex';
-            seasonBar.style.display = 'none';
-            epBar.style.display = 'none';
-            serverBar.innerHTML = ''; seasonBar.innerHTML = ''; epBar.innerHTML = '';
-
-            let currentServer = '2embed';
-            let currentSeason = 1;
-            let currentEp = 1;
-
-            const updateIframeUrl = () => {
-                if (item.type === 'فيلم') {
-                    iframe.src = currentServer === '2embed' 
-                        ? `https://www.2embed.cc/embed/${item.tmdbId}`
-                        : `https://vidsrc.to/embed/movie/${item.tmdbId}`;
-                } else {
-                    iframe.src = currentServer === '2embed'
-                        ? `https://www.2embed.cc/embedtv/${item.tmdbId}&s=${currentSeason}&e=${currentEp}`
-                        : `https://vidsrc.to/embed/tv/${item.tmdbId}/${currentSeason}/${currentEp}`;
-                }
-            };
-
-            const s1Btn = document.createElement('button');
-            s1Btn.className = 'chip-btn active';
-            s1Btn.innerText = 'سيرفر 1 (2Embed)';
-            s1Btn.onclick = () => {
-                document.querySelectorAll('#serverBar .chip-btn').forEach(b => b.classList.remove('active'));
-                s1Btn.classList.add('active');
-                currentServer = '2embed';
-                updateIframeUrl();
-            };
-
-            const s2Btn = document.createElement('button');
-            s2Btn.className = 'chip-btn';
-            s2Btn.innerText = 'سيرفر 2 (VidSrc)';
-            s2Btn.onclick = () => {
-                document.querySelectorAll('#serverBar .chip-btn').forEach(b => b.classList.remove('active'));
-                s2Btn.classList.add('active');
-                currentServer = 'vidsrc';
-                updateIframeUrl();
-            };
-
-            serverBar.appendChild(s1Btn);
-            serverBar.appendChild(s2Btn);
-
-            if (item.type === 'مسلسل') {
-                seasonBar.style.display = 'flex';
-                epBar.style.display = 'flex';
-
-                const totalSeasons = item.totalSeasons || 1;
-                const epsPerSeason = item.epsPerSeason || 10;
-
-                for (let s = 1; s <= totalSeasons; s++) {
-                    const sBtn = document.createElement('button');
-                    sBtn.className = `chip-btn ${s === 1 ? 'active' : ''}`;
-                    sBtn.innerText = `الموسم ${s}`;
-                    sBtn.onclick = () => {
-                        document.querySelectorAll('#seasonBar .chip-btn').forEach(b => b.classList.remove('active'));
-                        sBtn.classList.add('active');
-                        currentSeason = s;
-                        currentEp = 1;
-                        renderEps(epsPerSeason);
-                        updateIframeUrl();
-                    };
-                    seasonBar.appendChild(sBtn);
-                }
-
-                const renderEps = (epCount) => {
-                    epBar.innerHTML = '';
-                    for (let e = 1; e <= epCount; e++) {
-                        const eBtn = document.createElement('button');
-                        eBtn.className = `chip-btn ${e === currentEp ? 'active' : ''}`;
-                        eBtn.innerText = `حلقة ${e}`;
-                        eBtn.onclick = () => {
-                            document.querySelectorAll('#epBar .chip-btn').forEach(b => b.classList.remove('active'));
-                            eBtn.classList.add('active');
-                            currentEp = e;
-                            updateIframeUrl();
-                        };
-                        epBar.appendChild(eBtn);
-                    }
-                };
-
-                renderEps(epsPerSeason);
+            const seasonsTag = document.getElementById('detailSeasons');
+            if (item.type === 'مسلسل' && item.totalSeasons) {
+                seasonsTag.innerText = `${item.totalSeasons} مواسم`;
+                seasonsTag.style.display = 'inline-block';
+            } else {
+                seasonsTag.style.display = 'none';
             }
 
-            updateIframeUrl();
-            document.getElementById('playerModal').style.display = 'flex';
+            document.getElementById('detailsModal').style.display = 'flex';
         };
 
         window.saveMedia = async (e) => {
@@ -432,17 +343,15 @@
             await addDoc(collection(db, "media"), {
                 title: document.getElementById('title').value,
                 type,
-                tmdbId: document.getElementById('tmdbId').value.trim(),
                 year: document.getElementById('year').value || '2024',
                 rating: document.getElementById('rating').value || '8.0',
                 poster: document.getElementById('poster').value.trim(),
                 overview: document.getElementById('overview').value,
-                totalSeasons: type === 'مسلسل' ? parseInt(document.getElementById('totalSeasons').value) : 1,
-                epsPerSeason: type === 'مسلسل' ? parseInt(document.getElementById('epsPerSeason').value) : 1
+                totalSeasons: type === 'مسلسل' ? parseInt(document.getElementById('totalSeasons').value) : 1
             });
 
             document.getElementById('addForm').reset();
-            alert("تم إدراج العمل في سينما ستريم بنجاح!");
+            alert("تم حفظ معلومات العمل بنجاح!");
         };
 
         window.loginAdmin = async () => {
@@ -460,11 +369,6 @@
             else favs.push(id);
             localStorage.setItem('cinemastream_favs', JSON.stringify(favs));
             renderGrid(mediaList);
-        };
-
-        window.closePlayer = () => {
-            document.getElementById('playerModal').style.display = 'none';
-            document.getElementById('videoIframe').src = '';
         };
 
         window.filterCategory = (cat, e) => {
