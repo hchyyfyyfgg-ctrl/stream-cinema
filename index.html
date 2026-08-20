@@ -43,6 +43,7 @@
         .hero {
             position: relative; height: 50vh; min-height: 340px; background-size: cover; background-position: center top;
             display: flex; align-items: flex-end; padding: 0 4% 25px 4%; margin-top: 85px; border-radius: 0 0 16px 16px; overflow: hidden;
+            transition: background-image 0.5s ease-in-out;
         }
         .hero-overlay {
             position: absolute; inset: 0;
@@ -72,6 +73,7 @@
             background-size: cover; background-position: center; height: 165px;
             border-radius: 8px; position: relative; cursor: pointer; overflow: hidden;
             border: 1px solid var(--border-color); transition: transform 0.2s;
+            background-color: #222;
         }
         .card:active { transform: scale(0.96); }
         .card-type { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.75); font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; color: #fff; backdrop-filter: blur(4px); }
@@ -107,8 +109,8 @@
     <!-- Header -->
     <header>
         <div class="top-bar">
-            <div class="logo"><i class="fas fa-film"></i> سينما ستريم</div>
-            <input type="text" class="search-input" id="searchInput" placeholder="بحث..." oninput="handleSearch()">
+            <div class="logo" onclick="location.reload()"><i class="fas fa-film"></i> سينما ستريم</div>
+            <input type="text" class="search-input" id="searchInput" placeholder="بحث عن فيلم/مسلسل..." oninput="handleSearch()">
         </div>
         <ul class="nav-links">
             <li><a class="active" onclick="filterCategory('الكل', event)">الرئيسية</a></li>
@@ -123,8 +125,8 @@
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <span class="badge-trend"><i class="fas fa-fire"></i> العمل المتميز</span>
-            <h1 class="hero-title" id="heroTitle">-</h1>
-            <p class="hero-desc" id="heroOverview">-</p>
+            <h1 class="hero-title" id="heroTitle">جاري التحميل...</h1>
+            <p class="hero-desc" id="heroOverview">دليلك الكامل لمعرفة تفاصيل ومعلومات أحدث الأفلام والمسلسلات.</p>
             <div class="hero-btns">
                 <button class="btn-action btn-play" id="heroDetailsBtn"><i class="fas fa-info-circle"></i> عرض التفاصيل</button>
                 <button class="btn-action btn-add" onclick="toggleHeroFav()"><i class="fas fa-heart"></i> للمفضلة</button>
@@ -149,7 +151,6 @@
                     <span class="detail-tag" id="detailType">-</span>
                     <span class="detail-tag" id="detailRating">★ -</span>
                     <span class="detail-tag" id="detailYear">-</span>
-                    <span class="detail-tag" id="detailSeasons" style="display:none;">-</span>
                 </div>
                 <p id="detailOverview">-</p>
             </div>
@@ -157,106 +158,65 @@
     </div>
 
     <script>
-        // قائمة الأفلام والمسلسلات الجاهزة
-        const staticMediaList = [
-            {
-                id: "1",
-                title: "All of Us Are Dead",
-                type: "مسلسل",
-                year: "2022",
-                rating: "7.5",
-                totalSeasons: 1,
-                poster: "https://image.tmdb.org/t/p/w500/8P12L39912Cde02d131.jpg",
-                overview: "تتحول مدرسة ثانوية إلى نقطة انطلاق لتفشي تفشي فيروس الزومبي. يجب على الطلاب المحاصرين القتال من أجل الخروج أو التحول إلى مصابين."
-            },
-            {
-                id: "2",
-                title: "The Walking Dead",
-                type: "مسلسل",
-                year: "2010",
-                rating: "8.1",
-                totalSeasons: 11,
-                poster: "https://image.tmdb.org/t/p/w500/xf9wuDcqlUP9AObEgAptA1P2S9w.jpg",
-                overview: "يقود ضابط الشرطة ريك غرايمز مجموعة من الناجين في عالم يحكمه الزومبي بحثًا عن الأمان ومأوى للعيش فيه."
-            },
-            {
-                id: "3",
-                title: "Sweet Home",
-                type: "مسلسل",
-                year: "2020",
-                rating: "7.3",
-                totalSeasons: 3,
-                poster: "https://image.tmdb.org/t/p/w500/v3ne31411k2841k21.jpg",
-                overview: "بينما يتحول البشر إلى وحوش شريرة وينشرون الرعب، يقاتل مراهق معذب وجيرانه في المجمع السكني للتمسك بانسانيتهم والبقاء."
-            },
-            {
-                id: "4",
-                title: "Moving",
-                type: "مسلسل",
-                year: "2023",
-                rating: "8.5",
-                totalSeasons: 1,
-                poster: "https://image.tmdb.org/t/p/w500/414151412.jpg",
-                overview: "مراهقون يمتلكون قدرات خارقة مخفية وأولياء أمورهم يحاولون حمايتهم من الاستغلال والتهديدات الخارجية."
-            },
-            {
-                id: "5",
-                title: "Interstellar",
-                type: "فيلم",
-                year: "2014",
-                rating: "8.7",
-                poster: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6Mxl4vR31.jpg",
-                overview: "فريق من المستكشفين يسافر عبر ثقب دودي في الفضاء في محاولة لضمان بقاء البشرية على قيد الحياة بعد تدهور كوكب الأرض."
-            },
-            {
-                id: "6",
-                title: "The Ones Who Live",
-                type: "مسلسل",
-                year: "2024",
-                rating: "8.0",
-                totalSeasons: 1,
-                poster: "https://image.tmdb.org/t/p/w500/31414151.jpg",
-                overview: "قصة حب ملحمية بين ريك غرايمز وميشون في عالم تغيرت فيه كل قواعد العالم القديم بسبب تفشي الموتى السائرين."
-            },
-            {
-                id: "7",
-                title: "Weak Hero Class 1",
-                type: "مسلسل",
-                year: "2022",
-                rating: "8.6",
-                totalSeasons: 1,
-                poster: "https://image.tmdb.org/t/p/w500/3151512.jpg",
-                overview: "طالب نموذج يبدو ضعيفاً في الظاهر، ولكنه يستخدم الذكاء وعلم النفس لمواجهة العنف والمضايقات داخل وخارج المدرسة."
-            },
-            {
-                id: "8",
-                title: "Inception",
-                type: "فيلم",
-                year: "2010",
-                rating: "8.8",
-                poster: "https://image.tmdb.org/t/p/w500/ljs2A1D3A9B23k094.jpg",
-                overview: "لص محترف يستخرج أسرار الشركات من خلال استخدام تكنولوجيا مشاركة الأحلام، يُمنح فرصة لاستعادة حياته مقابل زرع فكرة داخل عقل أحدهم."
-            }
-        ];
+        const API_KEY = "3fd2be6f0cd0561139e103d815d9b40a";
+        const BASE_URL = "https://api.themoviedb.org/3";
+        const IMAGE_PATH = "https://image.tmdb.org/t/p/w500";
 
+        let loadedMedia = [];
         let currentFilter = 'الكل';
         let favs = JSON.parse(localStorage.getItem('cinemastream_favs') || '[]');
-        let currentHeroId = null;
+        let currentHeroItem = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (staticMediaList.length > 0) renderHero(staticMediaList[0]);
-            renderGrid(staticMediaList);
+            fetchTrendingMedia();
         });
 
+        async function fetchTrendingMedia() {
+            try {
+                const resMovies = await fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=ar-SA`);
+                const dataMovies = await resMovies.json();
+
+                const resTV = await fetch(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}&language=ar-SA`);
+                const dataTV = await resTV.json();
+
+                const movies = dataMovies.results.map(formatMediaData.bind(null, 'فيلم'));
+                const tvShows = dataTV.results.map(formatMediaData.bind(null, 'مسلسل'));
+
+                loadedMedia = [];
+                const max = Math.max(movies.length, tvShows.length);
+                for (let i = 0; i < max; i++) {
+                    if (movies[i]) loadedMedia.push(movies[i]);
+                    if (tvShows[i]) loadedMedia.push(tvShows[i]);
+                }
+
+                if (loadedMedia.length > 0) renderHero(loadedMedia[0]);
+                renderGrid(loadedMedia);
+            } catch (err) {
+                console.error("خطأ في جلب البيانات:", err);
+            }
+        }
+
+        function formatMediaData(type, item) {
+            return {
+                id: item.id.toString(),
+                title: item.title || item.name,
+                type: type,
+                year: (item.release_date || item.first_air_date || '2024').split('-')[0],
+                rating: item.vote_average ? item.vote_average.toFixed(1) : '8.0',
+                poster: item.poster_path ? `${IMAGE_PATH}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster',
+                overview: item.overview || 'لا توجد قصة متاحة لهذا العمل حالياً.'
+            };
+        }
+
         function renderHero(item) {
-            currentHeroId = item.id;
+            currentHeroItem = item;
             document.getElementById('heroBanner').style.backgroundImage = `url('${item.poster}')`;
             document.getElementById('heroTitle').innerText = item.title;
-            document.getElementById('heroOverview').innerText = item.overview || 'استكشف معلومات وقصة العمل.';
+            document.getElementById('heroOverview').innerText = item.overview;
             document.getElementById('heroDetailsBtn').onclick = () => showDetails(item.id);
         }
 
-        window.toggleHeroFav = () => { if (currentHeroId) toggleFav(currentHeroId); };
+        window.toggleHeroFav = () => { if (currentHeroItem) toggleFav(currentHeroItem.id); };
 
         function renderGrid(list) {
             const grid = document.getElementById('mediaGrid');
@@ -270,7 +230,7 @@
             if (q) filtered = filtered.filter(i => i.title.toLowerCase().includes(q));
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div style="color:#888; font-size:0.85rem; grid-column: 1/-1; padding:20px 0;">لا تتوفر أعمال matching.</div>`;
+                grid.innerHTML = `<div style="color:#888; font-size:0.85rem; grid-column: 1/-1; padding:20px 0;">لا تتوفر نتائج.</div>`;
                 return;
             }
 
@@ -284,7 +244,7 @@
                     <div class="card-info">
                         <div class="card-title">${item.title}</div>
                         <div class="card-meta">
-                            <span>★ ${item.rating || '8.0'}</span>
+                            <span>★ ${item.rating}</span>
                             <i class="${isFav ? 'fas' : 'far'} fa-heart" onclick="toggleFav('${item.id}', event)" style="${isFav ? 'color:red;' : ''}"></i>
                         </div>
                     </div>
@@ -294,24 +254,42 @@
             });
         }
 
+        let searchTimeout = null;
+        window.handleSearch = () => {
+            clearTimeout(searchTimeout);
+            const query = document.getElementById('searchInput').value.trim();
+
+            if (!query) {
+                renderGrid(loadedMedia);
+                return;
+            }
+
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=ar-SA&query=${encodeURIComponent(query)}`);
+                    const data = await res.json();
+                    
+                    const searchResults = data.results
+                        .filter(i => i.media_type === 'movie' || i.media_type === 'tv')
+                        .map(i => formatMediaData(i.media_type === 'movie' ? 'فيلم' : 'مسلسل', i));
+
+                    renderGrid(searchResults);
+                } catch (e) {
+                    console.error("خطأ في البحث:", e);
+                }
+            }, 400);
+        };
+
         window.showDetails = (id) => {
-            const item = staticMediaList.find(m => m.id === id);
+            const item = loadedMedia.find(m => m.id === id);
             if (!item) return;
 
             document.getElementById('detailPoster').src = item.poster;
             document.getElementById('detailTitle').innerText = item.title;
             document.getElementById('detailType').innerText = item.type;
-            document.getElementById('detailRating').innerText = `★ ${item.rating || '8.0'}`;
-            document.getElementById('detailYear').innerText = item.year || '2024';
-            document.getElementById('detailOverview').innerText = item.overview || 'لا تتوفر قصة حالياً.';
-
-            const seasonsTag = document.getElementById('detailSeasons');
-            if (item.type === 'مسلسل' && item.totalSeasons) {
-                seasonsTag.innerText = `${item.totalSeasons} مواسم`;
-                seasonsTag.style.display = 'inline-block';
-            } else {
-                seasonsTag.style.display = 'none';
-            }
+            document.getElementById('detailRating').innerText = `★ ${item.rating}`;
+            document.getElementById('detailYear').innerText = item.year;
+            document.getElementById('detailOverview').innerText = item.overview;
 
             document.getElementById('detailsModal').style.display = 'flex';
         };
@@ -321,7 +299,7 @@
             if (favs.includes(id)) favs = favs.filter(i => i !== id);
             else favs.push(id);
             localStorage.setItem('cinemastream_favs', JSON.stringify(favs));
-            renderGrid(staticMediaList);
+            renderGrid(loadedMedia);
         };
 
         window.filterCategory = (cat, e) => {
@@ -329,10 +307,9 @@
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
             if (e) e.target.classList.add('active');
             document.getElementById('gridTitle').innerText = cat === 'الكل' ? 'الأحدث والمضاف مؤخراً' : cat;
-            renderGrid(staticMediaList);
+            renderGrid(loadedMedia);
         };
 
-        window.handleSearch = () => renderGrid(staticMediaList);
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
     </script>
 </body>
