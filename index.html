@@ -39,10 +39,24 @@
         .nav-links a { color: var(--text-sub); text-decoration: none; font-size: 0.82rem; cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: 0.2s; }
         .nav-links a.active { color: #fff; font-weight: bold; background: var(--main-red); }
 
+        /* Filter Bars Container */
+        .filters-container { margin-top: 125px; padding: 0 4%; display: flex; flex-direction: column; gap: 8px; }
+
+        /* Regions / Languages Bar */
+        .bar-scroll { display: flex; gap: 8px; overflow-x: auto; white-space: nowrap; padding-bottom: 4px; }
+        .bar-scroll::-webkit-scrollbar { display: none; }
+        
+        .filter-btn {
+            background: #18181c; color: var(--text-sub); border: 1px solid var(--border-color);
+            padding: 5px 12px; border-radius: 14px; font-size: 0.75rem; cursor: pointer; transition: 0.2s;
+        }
+        .filter-btn.active, .filter-btn:hover { background: var(--main-red); color: #fff; border-color: var(--main-red); }
+        .genre-btn.active { background: #333; color: #fff; border-color: #666; }
+
         /* Hero Featured */
         .hero {
-            position: relative; height: 50vh; min-height: 340px; background-size: cover; background-position: center top;
-            display: flex; align-items: flex-end; padding: 0 4% 25px 4%; margin-top: 85px; border-radius: 0 0 16px 16px; overflow: hidden;
+            position: relative; height: 42vh; min-height: 300px; background-size: cover; background-position: center top;
+            display: flex; align-items: flex-end; padding: 0 4% 20px 4%; margin-top: 12px; border-radius: 16px; margin-inline: 4%; overflow: hidden;
             transition: background-image 0.5s ease-in-out;
         }
         .hero-overlay {
@@ -51,8 +65,8 @@
         }
         .hero-content { position: relative; z-index: 10; width: 100%; }
         .badge-trend { background: var(--accent-gold); color: #000; font-size: 0.65rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 6px; }
-        .hero-title { font-size: 1.7rem; font-weight: 800; margin-bottom: 6px; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
-        .hero-desc { font-size: 0.8rem; color: #ccc; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 600px; }
+        .hero-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
+        .hero-desc { font-size: 0.8rem; color: #ccc; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 600px; }
         
         .hero-btns { display: flex; gap: 10px; }
         .btn-action {
@@ -84,7 +98,9 @@
         .card-title { font-size: 0.75rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; color: var(--accent-gold); margin-top: 2px; }
 
-        /* Info Modal */
+        .loader { text-align: center; padding: 20px; color: var(--text-sub); font-size: 0.9rem; display: none; }
+
+        /* Modal */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal-box { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 12px; overflow: hidden; position: relative; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); }
         .close-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 1.1rem; }
@@ -99,8 +115,8 @@
         @media (min-width: 600px) {
             .media-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
             .card { height: 210px; }
-            .hero { height: 58vh; }
-            .hero-title { font-size: 2.3rem; }
+            .hero { height: 48vh; }
+            .hero-title { font-size: 2.1rem; }
         }
     </style>
 </head>
@@ -110,15 +126,41 @@
     <header>
         <div class="top-bar">
             <div class="logo" onclick="location.reload()"><i class="fas fa-film"></i> سينما ستريم</div>
-            <input type="text" class="search-input" id="searchInput" placeholder="بحث عن فيلم/مسلسل..." oninput="handleSearch()">
+            <input type="text" class="search-input" id="searchInput" placeholder="بحث..." oninput="handleSearch()">
         </div>
         <ul class="nav-links">
-            <li><a class="active" onclick="filterCategory('الكل', event)">الرئيسية</a></li>
-            <li><a onclick="filterCategory('فيلم', event)">الأفلام</a></li>
-            <li><a onclick="filterCategory('مسلسل', event)">المسلسلات</a></li>
-            <li><a onclick="filterCategory('المفضلة', event)">المفضلة</a></li>
+            <li><a class="active" onclick="filterType('الكل', event)">الرئيسية</a></li>
+            <li><a onclick="filterType('فيلم', event)">الأفلام</a></li>
+            <li><a onclick="filterType('مسلسل', event)">المسلسلات</a></li>
+            <li><a onclick="filterType('المفضلة', event)">المفضلة</a></li>
         </ul>
     </header>
+
+    <!-- Filters Bar Container -->
+    <div class="filters-container">
+        <!-- Country / Language Filter -->
+        <div class="bar-scroll" id="langBar">
+            <button class="filter-btn active" onclick="filterLang(null, event)">🌍 كل الدول</button>
+            <button class="filter-btn" onclick="filterLang('ar', event)">🇸🇦 عربي</button>
+            <button class="filter-btn" onclick="filterLang('en', event)">🇺🇸 أجنبي</button>
+            <button class="filter-btn" onclick="filterLang('hi', event)">🇮🇳 هندي</button>
+            <button class="filter-btn" onclick="filterLang('ko', event)">🇰🇷 كوري</button>
+            <button class="filter-btn" onclick="filterLang('ja', event)">🇯🇵 أنمي / ياباني</button>
+            <button class="filter-btn" onclick="filterLang('tr', event)">🇹🇷 تركي</button>
+        </div>
+
+        <!-- Genres Filter -->
+        <div class="bar-scroll" id="genresBar">
+            <button class="filter-btn genre-btn active" onclick="filterGenre(null, event)">الكل</button>
+            <button class="filter-btn genre-btn" onclick="filterGenre(28, event)">أكشن</button>
+            <button class="filter-btn genre-btn" onclick="filterGenre(35, event)">كوميدي</button>
+            <button class="filter-btn genre-btn" onclick="filterGenre(18, event)">دراما</button>
+            <button class="filter-btn genre-btn" onclick="filterGenre(27, event)">رعب</button>
+            <button class="filter-btn genre-btn" onclick="filterGenre(878, event)">خيال علمي</button>
+            <button class="filter-btn genre-btn" onclick="filterGenre(10749, event)">رومانسي</button>
+            <button class="filter-btn genre-btn" onclick="filterGenre(16, event)">أنيميشن</button>
+        </div>
+    </div>
 
     <!-- Banner -->
     <div class="hero" id="heroBanner">
@@ -138,6 +180,7 @@
     <div class="section-container">
         <div class="section-title" id="gridTitle">الأحدث والمضاف مؤخراً</div>
         <div class="media-grid" id="mediaGrid"></div>
+        <div class="loader" id="loader"><i class="fas fa-spinner fa-spin"></i> جاري تحميل المزيد...</div>
     </div>
 
     <!-- Details Card Modal -->
@@ -158,41 +201,70 @@
     </div>
 
     <script>
-        const API_KEY = "c90649169b66b322c8256426f78b20b5";
+        const API_KEY = "3fd2be6f0cd0561139e103d815d9b40a";
         const BASE_URL = "https://api.themoviedb.org/3";
         const IMAGE_PATH = "https://image.tmdb.org/t/p/w500";
 
         let loadedMedia = [];
-        let currentFilter = 'الكل';
+        let currentType = 'الكل';
+        let currentLang = null;
+        let currentGenre = null;
+        let currentPage = 1;
+        let isLoading = false;
         let favs = JSON.parse(localStorage.getItem('cinemastream_favs') || '[]');
         let currentHeroItem = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            fetchTrendingMedia();
+            fetchMediaData(true);
+            window.addEventListener('scroll', handleScroll);
         });
 
-        async function fetchTrendingMedia() {
-            try {
-                const resMovies = await fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=ar-SA`);
-                const dataMovies = await resMovies.json();
+        async function fetchMediaData(reset = false) {
+            if (isLoading) return;
+            isLoading = true;
+            document.getElementById('loader').style.display = 'block';
 
-                const resTV = await fetch(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}&language=ar-SA`);
-                const dataTV = await resTV.json();
-
-                const movies = dataMovies.results.map(formatMediaData.bind(null, 'فيلم'));
-                const tvShows = dataTV.results.map(formatMediaData.bind(null, 'مسلسل'));
-
+            if (reset) {
+                currentPage = 1;
                 loadedMedia = [];
-                const max = Math.max(movies.length, tvShows.length);
-                for (let i = 0; i < max; i++) {
-                    if (movies[i]) loadedMedia.push(movies[i]);
-                    if (tvShows[i]) loadedMedia.push(tvShows[i]);
+            }
+
+            try {
+                let endpoint = '';
+                const typeParam = currentType === 'مسلسل' ? 'tv' : 'movie';
+
+                if (currentLang || currentGenre) {
+                    endpoint = `${BASE_URL}/discover/${typeParam}?api_key=${API_KEY}&language=ar-SA&page=${currentPage}`;
+                    if (currentLang) endpoint += `&with_original_language=${currentLang}`;
+                    if (currentGenre) endpoint += `&with_genres=${currentGenre}`;
+                } else if (currentType === 'فيلم') {
+                    endpoint = `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=ar-SA&page=${currentPage}`;
+                } else if (currentType === 'مسلسل') {
+                    endpoint = `${BASE_URL}/tv/popular?api_key=${API_KEY}&language=ar-SA&page=${currentPage}`;
+                } else {
+                    endpoint = `${BASE_URL}/trending/all/week?api_key=${API_KEY}&language=ar-SA&page=${currentPage}`;
                 }
 
-                if (loadedMedia.length > 0) renderHero(loadedMedia[0]);
+                const res = await fetch(endpoint);
+                const data = await res.json();
+
+                const newItems = (data.results || [])
+                    .filter(item => item.media_type !== 'person')
+                    .map(item => formatMediaData(item.title ? 'فيلم' : 'مسلسل', item));
+
+                loadedMedia = [...loadedMedia, ...newItems];
+
+                if (reset && loadedMedia.length > 0) {
+                    renderHero(loadedMedia[0]);
+                }
+
                 renderGrid(loadedMedia);
+                currentPage++;
             } catch (err) {
                 console.error("خطأ في جلب البيانات:", err);
+            } finally {
+                isLoading = false;
+                document.getElementById('loader').style.display = 'none';
             }
         }
 
@@ -200,7 +272,7 @@
             return {
                 id: item.id.toString(),
                 title: item.title || item.name,
-                type: type,
+                type: item.title ? 'فيلم' : 'مسلسل',
                 year: (item.release_date || item.first_air_date || '2024').split('-')[0],
                 rating: item.vote_average ? item.vote_average.toFixed(1) : '8.0',
                 poster: item.poster_path ? `${IMAGE_PATH}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster',
@@ -220,20 +292,21 @@
 
         function renderGrid(list) {
             const grid = document.getElementById('mediaGrid');
-            grid.innerHTML = '';
 
             let filtered = list;
-            if (currentFilter === 'المفضلة') filtered = filtered.filter(i => favs.includes(i.id));
-            else if (currentFilter !== 'الكل') filtered = filtered.filter(i => i.type === currentFilter);
+            if (currentType === 'المفضلة') {
+                filtered = filtered.filter(i => favs.includes(i.id));
+            }
 
             const q = document.getElementById('searchInput').value.toLowerCase();
             if (q) filtered = filtered.filter(i => i.title.toLowerCase().includes(q));
 
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div style="color:#888; font-size:0.85rem; grid-column: 1/-1; padding:20px 0;">لا تتوفر نتائج.</div>`;
+            if (filtered.length === 0 && currentPage === 1) {
+                grid.innerHTML = `<div style="color:#888; font-size:0.85rem; grid-column: 1/-1; padding:20px 0;">لا تتوفر نتائج لهذا التصنيف.</div>`;
                 return;
             }
 
+            grid.innerHTML = '';
             filtered.forEach(item => {
                 const isFav = favs.includes(item.id);
                 const card = document.createElement('div');
@@ -253,6 +326,35 @@
                 grid.appendChild(card);
             });
         }
+
+        function handleScroll() {
+            if (currentType === 'المفضلة') return;
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+                fetchMediaData(false);
+            }
+        }
+
+        window.filterType = (type, e) => {
+            currentType = type;
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            if (e) e.target.classList.add('active');
+            document.getElementById('gridTitle').innerText = type === 'الكل' ? 'الأحدث والمضاف مؤخراً' : type;
+            fetchMediaData(true);
+        };
+
+        window.filterLang = (langCode, e) => {
+            currentLang = langCode;
+            document.querySelectorAll('#langBar .filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (e) e.target.classList.add('active');
+            fetchMediaData(true);
+        };
+
+        window.filterGenre = (genreId, e) => {
+            currentGenre = genreId;
+            document.querySelectorAll('#genresBar .filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (e) e.target.classList.add('active');
+            fetchMediaData(true);
+        };
 
         let searchTimeout = null;
         window.handleSearch = () => {
@@ -299,14 +401,6 @@
             if (favs.includes(id)) favs = favs.filter(i => i !== id);
             else favs.push(id);
             localStorage.setItem('cinemastream_favs', JSON.stringify(favs));
-            renderGrid(loadedMedia);
-        };
-
-        window.filterCategory = (cat, e) => {
-            currentFilter = cat;
-            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-            if (e) e.target.classList.add('active');
-            document.getElementById('gridTitle').innerText = cat === 'الكل' ? 'الأحدث والمضاف مؤخراً' : cat;
             renderGrid(loadedMedia);
         };
 
